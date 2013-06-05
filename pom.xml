@@ -31,7 +31,7 @@
     </build>
 
     <scm>
-        <developerConnection>scm:svn:https://svn.bonitasoft.org/bonita-connectors-6/tags/connectors/bonita-connector-email/bonita-connector-email-6.0.0</developerConnection>
+        <developerConnection>scm:svn:https://svn.bonitasoft.org/bonita-connectors-6/branches/connectors/bonita-connector-email/bonita-connector-email-6.0.x</developerConnection>
     </scm>
 
 </project>
