@@ -423,7 +423,7 @@ public class EmailConnector extends AbstractConnector {
 
     @Override
     protected void executeBusinessLogic() throws ConnectorException {
-        ClassLoader classLoader = this.getClass().getClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
             final Session session = getSession();
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
