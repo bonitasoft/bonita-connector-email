@@ -7,7 +7,7 @@
 	</parent>
 
 	<artifactId>bonita-connector-email</artifactId>
-	<version>6.0.1-rc-01</version>
+	<version>6.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -31,7 +31,7 @@
     </build>
 
     <scm>
-        <developerConnection>scm:svn:https://svn.bonitasoft.org/bonita-connectors-6/tags/connectors/bonita-connector-email/bonita-connector-email-6.0.1-rc-01</developerConnection>
+        <developerConnection>scm:svn:https://svn.bonitasoft.org/bonita-connectors-6/branches/connectors/bonita-connector-email/bonita-connector-email-6.0.x</developerConnection>
     </scm>
 
 </project>
