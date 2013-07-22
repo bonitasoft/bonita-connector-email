@@ -165,12 +165,9 @@ public class EmailConnector extends AbstractConnector {
         final String to = (String) getInputParameter(TO);
         checkInputParameter(to, errors);
 
-<<<<<<< HEAD
-=======
         final String replyTo = (String) getInputParameter(REPLY_TO);
         checkInputParameter(replyTo, errors);
 
->>>>>>> bonita-connector-email-6.0.x
         final String cc = (String) getInputParameter(CC);
         checkInputParameter(cc, errors);
 
@@ -199,10 +196,7 @@ public class EmailConnector extends AbstractConnector {
         logInputParameter(SSL_SUPPORT);
         logInputParameter(SMTP_PORT);
         logInputParameter(SMTP_HOST);
-<<<<<<< HEAD
-=======
         logInputParameter(REPLY_TO);
->>>>>>> bonita-connector-email-6.0.x
 
         LOGGER.info(PASSWORD + " ******");
         List<String> attachments = (List<String>) getInputParameter(ATTACHMENTS);
@@ -305,10 +299,8 @@ public class EmailConnector extends AbstractConnector {
         }
         final String to = (String) getInputParameter(TO);
         final String cc = (String) getInputParameter(CC);
-<<<<<<< HEAD
-=======
         String replyTo = (String) getInputParameter(REPLY_TO);
->>>>>>> bonita-connector-email-6.0.x
+
         final String bcc = (String) getInputParameter(BCC);
         final String subject = (String) getInputParameter(SUBJECT);
         final String charset = (String) getInputParameter(CHARSET, "UTF-8");
@@ -339,13 +331,12 @@ public class EmailConnector extends AbstractConnector {
         if (bcc != null && !bcc.isEmpty()) {
             mimeMessage.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc, false));
         }
-<<<<<<< HEAD
-=======
+
         if (replyTo != null && !replyTo.isEmpty()) {
             mimeMessage.setReplyTo(InternetAddress.parse(replyTo));
         }
 
->>>>>>> bonita-connector-email-6.0.x
+
         mimeMessage.setSubject(subject, charset);
         // Headers
         for (final Map.Entry<String, String> h : headers.entrySet()) {
@@ -395,15 +386,9 @@ public class EmailConnector extends AbstractConnector {
 
                     try {
                         ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
-<<<<<<< HEAD
-                        Document document = processAPI.getDocumentAtProcessInstantiation(processInstanceId, docName);
-                        if (document == null) {
-
-=======
                         Document document = processAPI.getLastDocument(processInstanceId, docName);
                         if (document == null) {
-                            throw new ConnectorException("Document "+ (String) attachment + " does not exist");
->>>>>>> bonita-connector-email-6.0.x
+                            throw new ConnectorException("Document "+ attachment + " does not exist");
                         } else if (document.hasContent()) {
                             fileName = document.getContentFileName();
                             byte[] docContent = processAPI.getDocumentContent(document.getContentStorageId());

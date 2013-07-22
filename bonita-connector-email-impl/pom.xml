@@ -80,11 +80,7 @@
 					<properties>
 						<property>
 							<name>listener</name>
-<<<<<<< HEAD
-							<value>org.bonitasoft.engine.jasper.annotation.CustomListener</value>
-=======
 							<value>org.bonitasoft.engine.test.annotation.CustomListener</value>
->>>>>>> bonita-connector-email-6.0.x
 						</property>
 					</properties>
 					<includes>
@@ -98,11 +94,7 @@
 					<dependency>
 						<groupId>org.bonitasoft.connectors</groupId>
 						<artifactId>bonita-connectors-assembly</artifactId>
-<<<<<<< HEAD
 						<version>6.1.0-rc-01</version>
-=======
-						<version>6.0.1</version>
->>>>>>> bonita-connector-email-6.0.x
 					</dependency>
 				</dependencies>
 				<executions>
