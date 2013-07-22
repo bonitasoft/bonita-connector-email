@@ -98,6 +98,11 @@ public class EmailConnector extends AbstractConnector {
     public static final String TO = "to";
 
     /**
+     * The "Reply-to" recipient(s) email address(es).
+     */
+    public static final String REPLY_TO = "replyTo";
+
+    /**
      * The sender's email address.
      */
     public static final String FROM = "from";
@@ -160,6 +165,9 @@ public class EmailConnector extends AbstractConnector {
         final String to = (String) getInputParameter(TO);
         checkInputParameter(to, errors);
 
+        final String replyTo = (String) getInputParameter(REPLY_TO);
+        checkInputParameter(replyTo, errors);
+
         final String cc = (String) getInputParameter(CC);
         checkInputParameter(cc, errors);
 
@@ -188,6 +196,7 @@ public class EmailConnector extends AbstractConnector {
         logInputParameter(SSL_SUPPORT);
         logInputParameter(SMTP_PORT);
         logInputParameter(SMTP_HOST);
+        logInputParameter(REPLY_TO);
 
         LOGGER.info(PASSWORD + " ******");
         List<String> attachments = (List<String>) getInputParameter(ATTACHMENTS);
@@ -290,6 +299,7 @@ public class EmailConnector extends AbstractConnector {
         }
         final String to = (String) getInputParameter(TO);
         final String cc = (String) getInputParameter(CC);
+        String replyTo = (String) getInputParameter(REPLY_TO);
         final String bcc = (String) getInputParameter(BCC);
         final String subject = (String) getInputParameter(SUBJECT);
         final String charset = (String) getInputParameter(CHARSET, "UTF-8");
@@ -320,6 +330,10 @@ public class EmailConnector extends AbstractConnector {
         if (bcc != null && !bcc.isEmpty()) {
             mimeMessage.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc, false));
         }
+        if (replyTo != null && !replyTo.isEmpty()) {
+            mimeMessage.setReplyTo(InternetAddress.parse(replyTo));
+        }
+
         mimeMessage.setSubject(subject, charset);
         // Headers
         for (final Map.Entry<String, String> h : headers.entrySet()) {
@@ -369,9 +383,9 @@ public class EmailConnector extends AbstractConnector {
 
                     try {
                         ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
-                        Document document = processAPI.getDocumentAtProcessInstantiation(processInstanceId, docName);
+                        Document document = processAPI.getLastDocument(processInstanceId, docName);
                         if (document == null) {
-
+                            throw new ConnectorException("Document "+ (String) attachment + " does not exist");
                         } else if (document.hasContent()) {
                             fileName = document.getContentFileName();
                             byte[] docContent = processAPI.getDocumentContent(document.getContentStorageId());
