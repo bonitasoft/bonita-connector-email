@@ -414,7 +414,7 @@ public class EmailConnectorTest {
         document.setProcessInstanceId(1);
         document.setName("Document1");
         when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
-        when(processAPI.getDocumentAtProcessInstantiation(1L, "Document1")).thenReturn(document);
+        when(processAPI.getLastDocument(1L, "Document1")).thenReturn(document);
         when(processAPI.getDocumentContent("storageId")).thenReturn("toto".getBytes());
         Map<String, Object> parameters = getBasicSettings();
         List<String> attachments = Collections.singletonList("Document1");
@@ -438,7 +438,7 @@ public class EmailConnectorTest {
         document.setUrl("http://www.bonitasoft.com");
         document.setName("Document1");
         when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
-        when(processAPI.getDocumentAtProcessInstantiation(1L, "Document1")).thenReturn(document);
+        when(processAPI.getLastDocument(1L, "Document1")).thenReturn(document);
         Map<String, Object> parameters = getBasicSettings();
         parameters.put(EmailConnector.MESSAGE, "Hello Mr message\n This is an email content");
         List<String> attachments = Collections.singletonList("Document1");
@@ -460,7 +460,7 @@ public class EmailConnectorTest {
         document.setProcessInstanceId(1);
         document.setName("Document1");
         when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
-        when(processAPI.getDocumentAtProcessInstantiation(1L, "Document1")).thenReturn(document);
+        when(processAPI.getLastDocument(1L, "Document1")).thenReturn(document);
         Map<String, Object> parameters = getBasicSettings();
         parameters.put(EmailConnector.MESSAGE, "Hello Mr message\n This is an email content");
         List<String> attachments = Collections.singletonList("Document1");
@@ -471,9 +471,6 @@ public class EmailConnectorTest {
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
         assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent(), not(containsString("Document1")));
-
     }
-
-
 
 }
