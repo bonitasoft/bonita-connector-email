@@ -39,6 +39,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.bpm.document.Document;
+import org.bonitasoft.engine.bpm.document.DocumentNotFoundException;
 import org.bonitasoft.engine.connector.AbstractConnector;
 import org.bonitasoft.engine.connector.ConnectorException;
 import org.bonitasoft.engine.connector.ConnectorValidationException;
@@ -138,8 +139,6 @@ public class EmailConnector extends AbstractConnector {
 
     @Override
     public void validateInputParameters() throws ConnectorValidationException {
-        // FIXME: handle replyTo parameter (not implemented yet):
-
         logInputParameters();
         List<String> errors = new ArrayList<String>(1);
         final Integer smtpPort = (Integer) getInputParameter(SMTP_PORT);
@@ -173,6 +172,28 @@ public class EmailConnector extends AbstractConnector {
 
         final String bcc = (String) getInputParameter(BCC);
         checkInputParameter(bcc, errors);
+
+        List<String> attachments = (List<String>) getInputParameter(ATTACHMENTS);
+
+        if (attachments != null) {
+            for (String attachment : attachments) {
+                long processInstanceId = getExecutionContext().getProcessInstanceId();
+                ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
+                Document document = null;
+
+                try {
+                    document = processAPI.getLastDocument(processInstanceId, attachment);
+                } catch (DocumentNotFoundException e) {
+                    errors.add("Unable to retrieve document " + attachment);
+                }
+
+                if (document == null) {
+                    errors.add("Unable to retrieve document "+ attachment);
+                }
+
+            }
+        }
+
 
         if (to == null && cc == null && bcc == null) {
             errors.add("No recipient address(es) is set (either in 'to', 'cc' or 'bcc'");
@@ -378,15 +399,12 @@ public class EmailConnector extends AbstractConnector {
                 String fileName;
 
                 if (attachment instanceof String) {
-                    String docName = (String) attachment;
-                    long processInstanceId = getExecutionContext().getProcessInstanceId();
-
                     try {
+                        String docName = (String) attachment;
+                        long processInstanceId = getExecutionContext().getProcessInstanceId();
                         ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
                         Document document = processAPI.getLastDocument(processInstanceId, docName);
-                        if (document == null) {
-                            throw new ConnectorException("Document "+ (String) attachment + " does not exist");
-                        } else if (document.hasContent()) {
+                        if (document.hasContent()) {
                             fileName = document.getContentFileName();
                             byte[] docContent = processAPI.getDocumentContent(document.getContentStorageId());
                             if (docContent != null) {
