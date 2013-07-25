@@ -321,6 +321,7 @@ public class EmailConnector extends AbstractConnector {
         final String to = (String) getInputParameter(TO);
         final String cc = (String) getInputParameter(CC);
         String replyTo = (String) getInputParameter(REPLY_TO);
+
         final String bcc = (String) getInputParameter(BCC);
         final String subject = (String) getInputParameter(SUBJECT);
         final String charset = (String) getInputParameter(CHARSET, "UTF-8");

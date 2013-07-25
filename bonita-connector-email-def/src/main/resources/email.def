@@ -40,7 +40,11 @@
 		<widget id="from" inputName="from" xsi:type="definition:Text" />
 		<widget id="to" inputName="to" xsi:type="definition:Text" />
 		<widget id="other" xsi:type="definition:Group">
+<<<<<<< HEAD
+			<widget id="replyto" inputName="replyTo" xsi:type="definition:Text" />
+=======
 			<widget id="replyTo" inputName="replyTo" xsi:type="definition:Text" />
+>>>>>>> bonita-connector-email-6.0.x
 			<widget id="cc" inputName="cc" xsi:type="definition:Text" />
 			<widget id="bcc" inputName="bcc" xsi:type="definition:Text" />
 		</widget>
