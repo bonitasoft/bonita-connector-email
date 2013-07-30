@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition:ConnectorDefinition xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<id>email</id>
-	<version>1.0.1</version>
+	<version>1.0.0</version>
 	<icon>email.png</icon>
 
 	<category id="messaging" icon="messaging.png" />
