@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>bonita-connector-email</artifactId>
-	<version>6.1.0-SNAPSHOT</version>
+	<version>6.1.0-rc-02</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -30,6 +30,6 @@
         <developerConnection>scm:git:git@github.com:bonitasoft/bonita-connector-email.git</developerConnection>
         <connection>scm:git:git@github.com:bonitasoft/bonita-connector-email.git</connection>
         <url>https://github.com/bonitasoft/bonita-connector-email</url>
-        <tag>HEAD</tag>
+        <tag>bonita-connector-email-6.1.0-rc-02</tag>
     </scm>
 </project>
