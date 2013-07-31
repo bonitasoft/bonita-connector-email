@@ -43,6 +43,7 @@ import org.bonitasoft.engine.bpm.document.DocumentNotFoundException;
 import org.bonitasoft.engine.connector.AbstractConnector;
 import org.bonitasoft.engine.connector.ConnectorException;
 import org.bonitasoft.engine.connector.ConnectorValidationException;
+import org.bonitasoft.engine.connector.EngineExecutionContext;
 
 /**
  * This connector provides an email sending service.
@@ -177,7 +178,13 @@ public class EmailConnector extends AbstractConnector {
 
         if (attachments != null) {
             for (String attachment : attachments) {
-                long processInstanceId = getExecutionContext().getProcessInstanceId();
+                EngineExecutionContext executionContext = getExecutionContext();
+                if (executionContext == null) {
+                    errors.add("Accessing an attachment can only be done in a process instance");
+                    break;
+                }
+
+                long processInstanceId = executionContext.getProcessInstanceId();
                 ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
                 Document document = null;
 
