@@ -15,6 +15,7 @@ package org.bonitasoft.connectors.email.test;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -210,6 +211,19 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
+    // BI-284 - [6.0.2] Email connector fails if one header row is empty
+    @Test
+    public void connector_dont_fail_if_an_header_line_contains_only_one_element() throws Exception {
+        List<List<Object>> headers = new ArrayList<List<Object>>();
+        List<Object> line = new ArrayList<Object>();
+        line.add("");
+        headers.add(line);
+        Map<String, Object> parameters = getBasicSettings();
+        parameters.put("headers", headers);
+        
+        executeConnector(parameters);
+    }
+    
     @Test
     public void sendEmailWithToRecipientsAddresses() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();

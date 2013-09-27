@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -211,13 +212,13 @@ public class EmailConnector extends AbstractConnector {
 		}
 
 
-		List<List<String>> headers = (List<List<String>>) getInputParameter(HEADERS);
-
-		if (headers == null) {
+		
+		Map<String, String> headers = getHeaders();
+		if (headers == null || headers.isEmpty()) {
 			LOGGER.info("Headers null");
 		} else {
-			for (List<String> header : headers) {
-				LOGGER.info("Header " + header.get(0) + " " + header.get(1));
+			for (Entry<String, String> header : headers.entrySet()) {
+				LOGGER.info("Header " + header.getKey() + " " + header.getValue());
 			}
 		}
 		logInputParameter(HEADERS);
@@ -282,6 +283,25 @@ public class EmailConnector extends AbstractConnector {
 		return session;
 	}
 
+	private Map<String, String> getHeaders() {
+	    final List<List<Object>> headersList = (List<List<Object>>) getInputParameter(HEADERS);
+        final Map<String, String> headers = new HashMap<String, String>();
+        if (headersList != null) {
+            for (List<Object> rows : headersList) {
+                if (rows.size() == 2) {
+                    Object keyContent = rows.get(0);
+                    Object valueContent = rows.get(1);
+                    if (keyContent != null && valueContent != null) {
+                        final String key = keyContent.toString();
+                        final String value = valueContent.toString();
+                        headers.put(key, value);
+                    }
+                }
+            }
+        }
+        return headers;
+	}
+	
 	/**
 	 * Get a MimeMessage from email properties.
 	 * 
@@ -313,22 +333,6 @@ public class EmailConnector extends AbstractConnector {
 		final List<Object> attachments = (List<Object>) getInputParameter(ATTACHMENTS);
 		final String message = (String) getInputParameter(MESSAGE, "");
 		final boolean html = (Boolean) getInputParameter(HTML, true);
-		@SuppressWarnings("unchecked")
-		final List<List<Object>> headersList = (List<List<Object>>) getInputParameter(HEADERS);
-		final Map<String, String> headers = new HashMap<String, String>();
-		if (headersList != null) {
-			for (List<Object> rows : headersList) {
-				if (rows.size() == 2) {
-					Object keyContent = rows.get(0);
-					Object valueContent = rows.get(1);
-					if (keyContent != null && valueContent != null) {
-						final String key = keyContent.toString();
-						final String value = valueContent.toString();
-						headers.put(key, value);
-					}
-				}
-			}
-		}
 		mimeMessage.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
 		if (cc != null && !cc.isEmpty()) {
 			mimeMessage.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc, false));
@@ -344,6 +348,7 @@ public class EmailConnector extends AbstractConnector {
 
 		mimeMessage.setSubject(subject, charset);
 		// Headers
+		final Map<String, String> headers = getHeaders();
 		for (final Map.Entry<String, String> h : headers.entrySet()) {
 			if (h.getKey() != null && h.getValue() != null) {
 				if (!h.getKey().equals("Content-ID")) {
