@@ -39,6 +39,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.bpm.document.Document;
+import org.bonitasoft.engine.bpm.document.DocumentNotFoundException;
 import org.bonitasoft.engine.connector.AbstractConnector;
 import org.bonitasoft.engine.connector.ConnectorException;
 import org.bonitasoft.engine.connector.ConnectorValidationException;
@@ -408,6 +409,8 @@ public class EmailConnector extends AbstractConnector {
 									messageBody += "\n "+document.getName()+" : "+document.getUrl();
 								}
 							}
+						} catch (DocumentNotFoundException e) {
+						    LOGGER.warning("Document " + attachment + " was not found. Please verify that your document is well initialized");
 						} catch (Exception be) {
 							throw new ConnectorException("Failed to retrieve document with name : "+attachment, be);
 						}
