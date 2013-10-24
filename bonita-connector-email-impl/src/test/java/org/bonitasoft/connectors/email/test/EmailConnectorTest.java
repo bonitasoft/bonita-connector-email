@@ -162,7 +162,7 @@ public class EmailConnectorTest {
     }
 
     @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-            story = "Test the sending of a simple email through the connector")
+            story = "Test the sending of a simple email through the connector", jira = "")
     @Test
     public void sendASimpleEmail() throws BonitaException, MessagingException, InterruptedException {
         executeConnector(getBasicSettings());
@@ -177,7 +177,7 @@ public class EmailConnectorTest {
     }
 
     @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-            story = "Test the sending of a email with field from filled through the connector")
+            story = "Test the sending of a email with field from filled through the connector", jira = "")
     @Test
     public void testSendEmailWithFromAddress() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
@@ -194,7 +194,7 @@ public class EmailConnectorTest {
     }
 
     @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-            story = "Test the sending of a email with authentification through the connector")
+            story = "Test the sending of a email with authentification through the connector", jira = "")
     @Test
     public void testSendEmailWithAutentication() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
