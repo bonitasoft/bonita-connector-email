@@ -45,8 +45,8 @@ import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.bpm.document.impl.DocumentImpl;
 import org.bonitasoft.engine.connector.EngineExecutionContext;
 import org.bonitasoft.engine.exception.BonitaException;
-import org.bonitasoft.engine.test.annotation.Cover;
-import org.bonitasoft.engine.test.annotation.Cover.BPMNConcept;
+//import org.bonitasoft.engine.test.annotation.Cover;
+//import org.bonitasoft.engine.test.annotation.Cover.BPMNConcept;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -160,8 +160,8 @@ public class EmailConnectorTest {
         return parameters;
     }
 
-    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-            story = "Test the sending of a simple email through the connector")
+//    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
+//            story = "Test the sending of a simple email through the connector", jira = "")
     @Test
     public void sendASimpleEmail() throws BonitaException, MessagingException, InterruptedException {
         executeConnector(getBasicSettings());
@@ -175,8 +175,8 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
-    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-            story = "Test the sending of a email with field from filled through the connector")
+//    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
+//            story = "Test the sending of a email with field from filled through the connector", jira = "")
     @Test
     public void testSendEmailWithFromAddress() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
@@ -192,8 +192,8 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
-    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-            story = "Test the sending of a email with authentification through the connector")
+//    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
+//            story = "Test the sending of a email with authentification through the connector", jira = "")
     @Test
     public void testSendEmailWithAutentication() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
@@ -210,6 +210,19 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
+    // BI-284 - [6.0.2] Email connector fails if one header row is empty
+    @Test
+    public void connector_dont_fail_if_an_header_line_contains_only_one_element() throws Exception {
+        List<List<Object>> headers = new ArrayList<List<Object>>();
+        List<Object> line = new ArrayList<Object>();
+        line.add("");
+        headers.add(line);
+        Map<String, Object> parameters = getBasicSettings();
+        parameters.put("headers", headers);
+        
+        executeConnector(parameters);
+    }
+    
     @Test
     public void sendEmailWithToRecipientsAddresses() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();

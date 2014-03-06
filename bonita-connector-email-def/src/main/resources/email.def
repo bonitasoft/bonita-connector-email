@@ -31,9 +31,9 @@
 			<widget id="ssl" inputName="sslSupport" xsi:type="definition:Checkbox" />
 			<widget id="starttls" inputName="starttlsSupport" xsi:type="definition:Checkbox" />
 		</widget>
-		<widget id="authentication" xsi:type="definition:Group">
+		<widget id="authentication" optional="false" xsi:type="definition:Group">
 			<widget id="username" inputName="userName" xsi:type="definition:Text" />
-      <widget id="password" inputName="password" xsi:type="definition:Password"/>
+      		<widget id="password" inputName="password" xsi:type="definition:Password"/>
 		</widget>
 	</page>
 	<page id="addressee">
