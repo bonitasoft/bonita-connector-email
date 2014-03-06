@@ -78,11 +78,6 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 			</plugin>
-			<!-- <plugin> -->
-			<!-- <groupId>com.google.code.maven-replacer-plugin</groupId> -->
-			<!-- <artifactId>replacer</artifactId> -->
-			<!-- <version>1.5.1</version> -->
-			<!-- </plugin> -->
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>jarjar-maven-plugin</artifactId>
