@@ -7,7 +7,7 @@
     <description>Implementation based on javax.mail 1.4.5</description>
 	<implementationClassname>org.bonitasoft.connectors.email.EmailConnector</implementationClassname>
 	<implementationId>email-impl</implementationId>
-	<implementationVersion>1.0.12</implementationVersion>
+	<implementationVersion>$implementation.version$</implementationVersion>
 
 $Dependencies$
 
