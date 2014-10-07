@@ -13,45 +13,44 @@
  **/
 package org.bonitasoft.connectors.email.test;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNotNull;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.commons.io.IOUtils;
 import org.bonitasoft.connectors.email.EmailConnector;
 import org.bonitasoft.engine.api.APIAccessor;
 import org.bonitasoft.engine.api.ProcessAPI;
+import org.bonitasoft.engine.bpm.document.Document;
+import org.bonitasoft.engine.bpm.document.DocumentNotFoundException;
 import org.bonitasoft.engine.bpm.document.impl.DocumentImpl;
 import org.bonitasoft.engine.connector.EngineExecutionContext;
 import org.bonitasoft.engine.exception.BonitaException;
-//import org.bonitasoft.engine.test.annotation.Cover;
-//import org.bonitasoft.engine.test.annotation.Cover.BPMNConcept;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
+
+// import org.bonitasoft.engine.test.annotation.Cover;
+// import org.bonitasoft.engine.test.annotation.Cover.BPMNConcept;
 
 /**
  * @author Matthieu Chaffotte
@@ -160,8 +159,8 @@ public class EmailConnectorTest {
         return parameters;
     }
 
-//    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-//            story = "Test the sending of a simple email through the connector", jira = "")
+    //    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
+    //            story = "Test the sending of a simple email through the connector", jira = "")
     @Test
     public void sendASimpleEmail() throws BonitaException, MessagingException, InterruptedException {
         executeConnector(getBasicSettings());
@@ -175,8 +174,8 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
-//    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-//            story = "Test the sending of a email with field from filled through the connector", jira = "")
+    //    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
+    //            story = "Test the sending of a email with field from filled through the connector", jira = "")
     @Test
     public void testSendEmailWithFromAddress() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
@@ -192,8 +191,8 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
-//    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-//            story = "Test the sending of a email with authentification through the connector", jira = "")
+    //    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
+    //            story = "Test the sending of a email with authentification through the connector", jira = "")
     @Test
     public void testSendEmailWithAutentication() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
@@ -219,10 +218,10 @@ public class EmailConnectorTest {
         headers.add(line);
         Map<String, Object> parameters = getBasicSettings();
         parameters.put("headers", headers);
-        
+
         executeConnector(parameters);
     }
-    
+
     @Test
     public void sendEmailWithToRecipientsAddresses() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
@@ -437,7 +436,73 @@ public class EmailConnectorTest {
 
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
-        assertThat(((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(1).getFileName(), is("filename.txt"));
+        assertThat(((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(1).getFileName()).isEqualTo("filename.txt");
+    }
+
+    @Test
+    public void sendWithDocumentList() throws BonitaException, MessagingException, IOException {
+        DocumentImpl document1 = createDocument(1L, "toto1");
+        DocumentImpl document2 = createDocument(2L, "toto2");
+        List<Document> documents = Arrays.<Document> asList(document1, document2);
+        when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
+        Map<String, Object> parameters = getBasicSettings();
+        parameters.put(EmailConnector.ATTACHMENTS, documents);
+
+        executeConnector(parameters);
+
+        List<WiserMessage> messages = server.getMessages();
+        assumeNotNull(messages);
+        List<byte[]> contents = getAttachmentsContent((MimeMultipart) messages.get(0).getMimeMessage().getContent());
+        assertThat(new String(contents.get(1))).isEqualTo("toto1");
+        assertThat(new String(contents.get(2))).isEqualTo("toto2");
+    }
+
+    @Test
+    public void sendWithMultipleDocumentList() throws BonitaException, MessagingException, IOException {
+        DocumentImpl document1 = createDocument(1L, "toto1");
+        DocumentImpl document2 = createDocument(2L, "toto2");
+        DocumentImpl document3 = createDocument(3L, "toto3");
+        DocumentImpl document4 = createDocument(4L, "toto4");
+        List<Document> documents1 = Arrays.<Document> asList(document1, document2);
+        List<Document> documents2 = Arrays.<Document> asList(document3, document4);
+        List lists = Arrays.asList(documents1, documents2);
+        when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
+        Map<String, Object> parameters = getBasicSettings();
+        parameters.put(EmailConnector.ATTACHMENTS, lists);
+
+        executeConnector(parameters);
+
+        List<WiserMessage> messages = server.getMessages();
+        assumeNotNull(messages);
+        List<byte[]> contents = getAttachmentsContent((MimeMultipart) messages.get(0).getMimeMessage().getContent());
+        assertThat(new String(contents.get(1))).isEqualTo("toto1");
+        assertThat(new String(contents.get(2))).isEqualTo("toto2");
+        assertThat(new String(contents.get(3))).isEqualTo("toto3");
+        assertThat(new String(contents.get(4))).isEqualTo("toto4");
+    }
+
+    private List<byte[]> getAttachmentsContent(MimeMultipart multipart) throws MessagingException, IOException {
+        List<byte[]> attachments = new ArrayList<byte[]>();
+        for (int i = 0; i < multipart.getCount(); i++) {
+            BodyPart bodyPart = multipart.getBodyPart(i);
+            attachments.add(IOUtils.toByteArray(bodyPart.getInputStream()));
+        }
+        return attachments;
+    }
+
+    private DocumentImpl createDocument(long id, String content) throws DocumentNotFoundException {
+        DocumentImpl document = new DocumentImpl();
+        document.setAuthor(1);
+        document.setContentMimeType("application/octet-stream");
+        document.setContentStorageId("storageId" + id);
+        document.setCreationDate(new Date());
+        document.setFileName("filename.txt");
+        document.setHasContent(true);
+        document.setId(id);
+        document.setProcessInstanceId(1);
+        document.setName("Document1");
+        when(processAPI.getDocumentContent("storageId" + id)).thenReturn(content.getBytes());
+        return document;
     }
 
     @Test
@@ -461,7 +526,7 @@ public class EmailConnectorTest {
 
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
-        assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent(), containsString("http://www.bonitasoft.com"));
+        assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent()).contains("http://www.bonitasoft.com");
     }
 
     @Test
@@ -483,10 +548,8 @@ public class EmailConnectorTest {
 
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
-        assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent(), not(containsString("Document1")));
+        assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent()).doesNotContain("Document1");
 
     }
-
-
 
 }
