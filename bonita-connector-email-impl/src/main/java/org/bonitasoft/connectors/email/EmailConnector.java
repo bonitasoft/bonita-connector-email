@@ -389,7 +389,7 @@ public class EmailConnector extends AbstractConnector {
             List<MimeBodyPart> bodyParts = new ArrayList<MimeBodyPart>();
             if (attachments != null) {
                 for (Object attachment : attachments) {
-                    handleAttachment(messageBody, processAPI, bodyParts, attachment);
+                    handleAttachment(html, messageBody, processAPI, bodyParts, attachment);
                 }
             }
             MimeBodyPart bodyPart = new MimeBodyPart();
@@ -412,10 +412,10 @@ public class EmailConnector extends AbstractConnector {
 
     }
 
-    private void handleAttachment(StringBuilder messageBody, ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Object attachment) throws ConnectorException, DocumentNotFoundException, MessagingException {
+    private void handleAttachment(boolean html, StringBuilder messageBody, ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Object attachment) throws ConnectorException, DocumentNotFoundException, MessagingException {
         if(attachment instanceof List){
             for (Object subAttachment : ((List) attachment)) {
-                handleAttachment(messageBody,processAPI,bodyParts,subAttachment);
+                handleAttachment(html, messageBody,processAPI,bodyParts,subAttachment);
             }
             return;
         }
@@ -425,7 +425,12 @@ public class EmailConnector extends AbstractConnector {
         } else if (document.hasContent()) {
             addBodyPart(processAPI, bodyParts, document);
         } else if (document.getUrl() != null) {
-            messageBody.append("\n ").append(document.getName()).append(" : ").append(document.getUrl());
+            if(html){
+                messageBody.append("<br>");
+            }else{
+                messageBody.append("\n ");
+            }
+            messageBody.append(document.getName()).append(" : ").append(document.getUrl());
         }
     }
 
