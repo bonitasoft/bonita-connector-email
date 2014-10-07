@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
@@ -141,8 +142,7 @@ public class EmailConnector extends AbstractConnector {
 	@Override
 	public void validateInputParameters() throws ConnectorValidationException {
 		// FIXME: handle replyTo parameter (not implemented yet):
-
-		logInputParameters();
+        logInputParameters();
 		List<String> errors = new ArrayList<String>(1);
 		final Integer smtpPort = (Integer) getInputParameter(SMTP_PORT);
 
@@ -185,6 +185,9 @@ public class EmailConnector extends AbstractConnector {
 	}
 
 	private void logInputParameters() {
+        if(!LOGGER.isLoggable(Level.INFO)){
+            return;
+        }
 		logInputParameter(CHARSET);
 		logInputParameter(MESSAGE);
 		logInputParameter(HTML);
@@ -201,18 +204,18 @@ public class EmailConnector extends AbstractConnector {
 		logInputParameter(REPLY_TO);
 
 		LOGGER.info(PASSWORD + " ******");
-		List<String> attachments = (List<String>) getInputParameter(ATTACHMENTS);
+		List<Object> attachments = (List<Object>) getInputParameter(ATTACHMENTS);
 
 		if (attachments == null) {
 			LOGGER.info("Attachments null");
 		} else {
-			for (String attachment : attachments) {
+			for (Object attachment : attachments) {
 				LOGGER.info("Attachment " + attachment);
 			}
 		}
 
 
-		
+
 		Map<String, String> headers = getHeaders();
 		if (headers == null || headers.isEmpty()) {
 			LOGGER.info("Headers null");
@@ -248,7 +251,7 @@ public class EmailConnector extends AbstractConnector {
 
 	/**
 	 * Returns an unshared email session from the SMTP server's properties.
-	 * 
+	 *
 	 * @return an unshared email session from the SMTP server's properties
 	 */
 	private Session getSession() {
@@ -301,10 +304,10 @@ public class EmailConnector extends AbstractConnector {
         }
         return headers;
 	}
-	
+
 	/**
 	 * Get a MimeMessage from email properties.
-	 * 
+	 *
 	 * @param emailSession
 	 *            the email session
 	 * @throws AddressException
@@ -374,82 +377,86 @@ public class EmailConnector extends AbstractConnector {
 		return mimeMessage;
 	}
 
-	/**
-	 * Get the <code>Multipart</code> of the email.
-	 * 
-	 */
-	private Multipart getMultipart(final boolean html, final String message, final String charset, List<Object> attachments)
-			throws ConnectorException
-			{
-		String messageBody = message;
-		final Multipart body = new MimeMultipart("related");
-		MimeBodyPart bodyPart;
-		List<MimeBodyPart> bodyParts = new ArrayList<MimeBodyPart>();
-		if (attachments != null) {
-			for (Object attachment : attachments) {
-				String fileName;
-				if (attachment instanceof String) {
-					if(!((String) attachment).trim().isEmpty()){
-						String docName = (String) attachment;
-						long processInstanceId = getExecutionContext().getProcessInstanceId();
-						try {
-							ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
-							Document document = processAPI.getLastDocument(processInstanceId, docName);
-							if (document == null) {
-								throw new ConnectorException("Document "+ attachment + " does not exist");
-							} else if (document.hasContent()) {
-								fileName = document.getContentFileName();
-								byte[] docContent = processAPI.getDocumentContent(document.getContentStorageId());
-								if (docContent != null) {
-									String mimeType = document.getContentMimeType();
-									bodyPart = new MimeBodyPart();
-									final DataSource source = new ByteArrayDataSource(docContent, mimeType);
-									final DataHandler dataHandler = new DataHandler(source);
-									bodyPart.setDataHandler(dataHandler);
-									bodyPart.setFileName(fileName);
-									bodyParts.add(bodyPart);
-								}
-							} else {
-								if (document.getUrl() != null) {
-									messageBody += "\n "+document.getName()+" : "+document.getUrl();
-								}
-							}
-						} catch (DocumentNotFoundException e) {
-						    LOGGER.warning("Document " + attachment + " was not found. Please verify that your document is well initialized");
-						} catch (Exception be) {
-							throw new ConnectorException("Failed to retrieve document with name : "+attachment, be);
-						}
-					}
-				} else {
-					throw new ConnectorException("Attachments must be document names");
-				}
-			}
-		}
+    /**
+     * Get the <code>Multipart</code> of the email.
+     */
+    private Multipart getMultipart(final boolean html, final String message, final String charset, List<Object> attachments)
+            throws ConnectorException {
+        try {
+            StringBuilder messageBody = new StringBuilder(message);
+            ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
+            final Multipart body = new MimeMultipart("related");
+            List<MimeBodyPart> bodyParts = new ArrayList<MimeBodyPart>();
+            if (attachments != null) {
+                for (Object attachment : attachments) {
+                    handleAttachment(messageBody, processAPI, bodyParts, attachment);
+                }
+            }
+            MimeBodyPart bodyPart = new MimeBodyPart();
+            if (html) {
+                bodyPart.setText(messageBody.toString(), charset, HTML);
+            } else {
+                bodyPart.setText(messageBody.toString(), charset);
+            }
+            body.addBodyPart(bodyPart);
 
-		bodyPart = new MimeBodyPart();
-		try {
-			if (html) {
-				bodyPart.setText(messageBody, charset, HTML);
-			} else {
-				bodyPart.setText(messageBody, charset);
-			}
-			body.addBodyPart(bodyPart);
-		} catch (MessagingException me) {
-			throw new ConnectorException(me);
-		}
+            for (MimeBodyPart part : bodyParts) {
+                body.addBodyPart(part);
+            }
+            return body;
+        } catch (ConnectorException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ConnectorException("unable to retrieve attachments for the email", e);
+        }
 
-		for (MimeBodyPart part : bodyParts) {
-			try {
-				body.addBodyPart(part);
-			} catch (MessagingException e) {
-				throw new ConnectorException(e);
-			}
-		}
+    }
 
-		return body;
-			}
+    private void handleAttachment(StringBuilder messageBody, ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Object attachment) throws ConnectorException, DocumentNotFoundException, MessagingException {
+        if(attachment instanceof List){
+            for (Object subAttachment : ((List) attachment)) {
+                handleAttachment(messageBody,processAPI,bodyParts,subAttachment);
+            }
+            return;
+        }
+        Document document = getDocument(attachment, processAPI);
+        if (document == null) {
+            throw new ConnectorException("Document " + attachment + " does not exist");
+        } else if (document.hasContent()) {
+            addBodyPart(processAPI, bodyParts, document);
+        } else if (document.getUrl() != null) {
+            messageBody.append("\n ").append(document.getName()).append(" : ").append(document.getUrl());
+        }
+    }
 
-	@Override
+    private void addBodyPart(ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Document document) throws DocumentNotFoundException, MessagingException {
+        MimeBodyPart bodyPart;
+        String fileName = document.getContentFileName();
+        byte[] docContent = processAPI.getDocumentContent(document.getContentStorageId());
+        if (docContent != null) {
+            String mimeType = document.getContentMimeType();
+            bodyPart = new MimeBodyPart();
+            final DataSource source = new ByteArrayDataSource(docContent, mimeType);
+            final DataHandler dataHandler = new DataHandler(source);
+            bodyPart.setDataHandler(dataHandler);
+            bodyPart.setFileName(fileName);
+            bodyParts.add(bodyPart);
+        }
+    }
+
+    private Document getDocument(Object attachment, ProcessAPI processAPI) throws ConnectorException, DocumentNotFoundException {
+        if (attachment instanceof String && !((String) attachment).trim().isEmpty()) {
+            String docName = (String) attachment;
+            long processInstanceId = getExecutionContext().getProcessInstanceId();
+            return processAPI.getLastDocument(processInstanceId, docName);
+        } else if( attachment instanceof Document){
+            return (Document) attachment;
+        } else {
+            throw new ConnectorException("Attachments must be document names or org.bonitasoft.engine.bpm.document.Document");
+        }
+    }
+
+    @Override
 	protected void executeBusinessLogic() throws ConnectorException {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		try {
@@ -459,7 +466,7 @@ public class EmailConnector extends AbstractConnector {
 			Transport.send(email);
 		} catch (final Exception e) {
 			throw new ConnectorException(e);
-		} 
+		}
 		finally {
 			Thread.currentThread().setContextClassLoader(classLoader);
 		}
