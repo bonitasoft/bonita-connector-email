@@ -385,7 +385,7 @@ public class EmailConnector extends AbstractConnector {
         try {
             StringBuilder messageBody = new StringBuilder(message);
             ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
-            final Multipart body = new MimeMultipart("related");
+            final Multipart body = new MimeMultipart("mixed");
             List<MimeBodyPart> bodyParts = new ArrayList<MimeBodyPart>();
             if (attachments != null) {
                 for (Object attachment : attachments) {
