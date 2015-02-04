@@ -14,7 +14,11 @@
 package org.bonitasoft.connectors.email.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -437,6 +441,8 @@ public class EmailConnectorTest {
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
         assertThat(((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(1).getFileName()).isEqualTo("filename.txt");
+        // BS-11239 : change multipart mime type in order to have attachments openable on iPhone
+        assertThat(messages.get(0).getMimeMessage().getContentType()).startsWith("multipart/mixed;");
     }
 
     @Test
