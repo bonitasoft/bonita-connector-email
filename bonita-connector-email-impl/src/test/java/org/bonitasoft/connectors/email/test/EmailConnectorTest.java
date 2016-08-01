@@ -37,6 +37,7 @@ import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.IOUtils;
 import org.bonitasoft.connectors.email.EmailConnector;
@@ -444,6 +445,32 @@ public class EmailConnectorTest {
         // BS-11239 : change multipart mime type in order to have attachments openable on iPhone
         assertThat(messages.get(0).getMimeMessage().getContentType()).startsWith("multipart/mixed;");
     }
+    
+    @Test
+    public void sendFileDocumentWithSpecialEncoding() throws BonitaException, MessagingException, IOException {
+        DocumentImpl document = new DocumentImpl();
+        document.setAuthor(1);
+        document.setContentMimeType("application/octet-stream");
+        document.setContentStorageId("storageId");
+        document.setCreationDate(new Date());
+        document.setFileName("最日本最.TXT");
+        document.setHasContent(true);
+        document.setId(1);
+        document.setProcessInstanceId(1);
+        document.setName("Document1");
+        when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
+        when(processAPI.getLastDocument(1L, "Document1")).thenReturn(document);
+        when(processAPI.getDocumentContent("storageId")).thenReturn("toto".getBytes());
+        Map<String, Object> parameters = getBasicSettings();
+        List<String> attachments = Collections.singletonList("Document1");
+        parameters.put(EmailConnector.ATTACHMENTS, attachments);
+
+        executeConnector(parameters);
+
+        List<WiserMessage> messages = server.getMessages();
+        assumeNotNull(messages);
+        assertThat(((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(1).getFileName()).isEqualTo(MimeUtility.encodeText("最日本最.TXT"));
+    }
 
     @Test
     public void sendWithDocumentList() throws BonitaException, MessagingException, IOException {
@@ -486,6 +513,8 @@ public class EmailConnectorTest {
         assertThat(new String(contents.get(3))).isEqualTo("toto3");
         assertThat(new String(contents.get(4))).isEqualTo("toto4");
     }
+    
+    
 
     private List<byte[]> getAttachmentsContent(MimeMultipart multipart) throws MessagingException, IOException {
         List<byte[]> attachments = new ArrayList<byte[]>();

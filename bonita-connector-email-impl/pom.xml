@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>bonita-connector-email-impl</artifactId>
-	<version>1.0.14</version>
+	<version>1.0.15</version>
 	
 	<properties>
 		<definition.version>1.0.0</definition.version>

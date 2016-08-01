@@ -14,6 +14,7 @@
  */
 package org.bonitasoft.connectors.email;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.bonitasoft.engine.api.ProcessAPI;
@@ -412,7 +414,7 @@ public class EmailConnector extends AbstractConnector {
 
     }
 
-    private void handleAttachment(boolean html, StringBuilder messageBody, ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Object attachment) throws ConnectorException, DocumentNotFoundException, MessagingException {
+    private void handleAttachment(boolean html, StringBuilder messageBody, ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Object attachment) throws ConnectorException, DocumentNotFoundException, MessagingException, UnsupportedEncodingException {
         if(attachment instanceof List){
             for (Object subAttachment : ((List) attachment)) {
                 handleAttachment(html, messageBody,processAPI,bodyParts,subAttachment);
@@ -434,7 +436,7 @@ public class EmailConnector extends AbstractConnector {
         }
     }
 
-    private void addBodyPart(ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Document document) throws DocumentNotFoundException, MessagingException {
+    private void addBodyPart(ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Document document) throws DocumentNotFoundException, MessagingException, UnsupportedEncodingException {
         MimeBodyPart bodyPart;
         String fileName = document.getContentFileName();
         byte[] docContent = processAPI.getDocumentContent(document.getContentStorageId());
@@ -444,7 +446,7 @@ public class EmailConnector extends AbstractConnector {
             final DataSource source = new ByteArrayDataSource(docContent, mimeType);
             final DataHandler dataHandler = new DataHandler(source);
             bodyPart.setDataHandler(dataHandler);
-            bodyPart.setFileName(fileName);
+            bodyPart.setFileName(MimeUtility.encodeText(fileName));
             bodyParts.add(bodyPart);
         }
     }
