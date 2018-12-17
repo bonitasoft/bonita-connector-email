@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<definitionId>email</definitionId>
-	<definitionVersion>$definition.version$</definitionVersion>
+	<definitionVersion>1.0.0</definitionVersion>
     <description>Implementation based on javax.mail 1.4.5</description>
 	<implementationClassname>org.bonitasoft.connectors.email.EmailConnector</implementationClassname>
 	<implementationId>email-impl</implementationId>
