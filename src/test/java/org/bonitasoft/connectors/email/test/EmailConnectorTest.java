@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -51,6 +50,9 @@ import org.bonitasoft.engine.exception.BonitaException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
@@ -60,6 +62,7 @@ import org.subethamail.wiser.WiserMessage;
 /**
  * @author Matthieu Chaffotte
  */
+@RunWith(MockitoJUnitRunner.class)
 public class EmailConnectorTest {
 
     private static final String SMTP_HOST = "localhost";
@@ -87,15 +90,15 @@ public class EmailConnectorTest {
     private static int smtpPort = 0;
 
     private Wiser server;
+    @Mock
     private EngineExecutionContext engineExecutionContext;
+    @Mock
     private APIAccessor apiAccessor;
+    @Mock
     private ProcessAPI processAPI;
 
     @Before
     public void setUp() {
-        engineExecutionContext = mock(EngineExecutionContext.class);
-        apiAccessor = mock(APIAccessor.class);
-        processAPI = mock(ProcessAPI.class);
         when(apiAccessor.getProcessAPI()).thenReturn(processAPI);
         startServer();
     }
@@ -477,7 +480,6 @@ public class EmailConnectorTest {
         DocumentImpl document1 = createDocument(1L, "toto1");
         DocumentImpl document2 = createDocument(2L, "toto2");
         List<Document> documents = Arrays.<Document> asList(document1, document2);
-        when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
         Map<String, Object> parameters = getBasicSettings();
         parameters.put(EmailConnector.ATTACHMENTS, documents);
 
@@ -499,7 +501,6 @@ public class EmailConnectorTest {
         List<Document> documents1 = Arrays.<Document> asList(document1, document2);
         List<Document> documents2 = Arrays.<Document> asList(document3, document4);
         List lists = Arrays.asList(documents1, documents2);
-        when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
         Map<String, Object> parameters = getBasicSettings();
         parameters.put(EmailConnector.ATTACHMENTS, lists);
 
