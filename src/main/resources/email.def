@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition:ConnectorDefinition xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<id>email</id>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<icon>email.png</icon>
 
 	<category id="messaging" icon="messaging.png" />
@@ -13,6 +13,7 @@
 	<input name="userName" type="java.lang.String" />
 	<input name="password" type="java.lang.String" />
 	<input name="from" type="java.lang.String" mandatory="true" />
+	<input name="returnPath" type="java.lang.String" />
 	<input name="to" type="java.lang.String" mandatory="true" />
 	<input name="bcc" type="java.lang.String" />
 	<input name="cc" type="java.lang.String" />
@@ -40,6 +41,7 @@
 		<widget id="from" inputName="from" xsi:type="definition:Text" />
 		<widget id="to" inputName="to" xsi:type="definition:Text" />
 		<widget id="other" xsi:type="definition:Group">
+			<widget id="returnPath" inputName="returnPath" xsi:type="definition:Text" />
 			<widget id="replyTo" inputName="replyTo" xsi:type="definition:Text" />
 			<widget id="cc" inputName="cc" xsi:type="definition:Text" />
 			<widget id="bcc" inputName="bcc" xsi:type="definition:Text" />
