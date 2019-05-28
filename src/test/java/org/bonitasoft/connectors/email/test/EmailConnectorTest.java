@@ -23,6 +23,7 @@ import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ import java.util.Map;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
@@ -286,6 +288,21 @@ public class EmailConnectorTest {
         mime = message.getMimeMessage();
         assertEquals(SUBJECT, mime.getSubject());
         assertEquals(0, mime.getSize());
+    }
+    
+    @Test
+    public void sendEmailWithReturnPathAddress() throws Exception {
+        final Map<String, Object> parameters = getBasicSettings();
+        parameters.put("returnPath", ADDRESSPATTY);
+        parameters.put("from", ADDRESSMARK);
+        executeConnector(parameters);
+
+        List<WiserMessage> messages = server.getMessages();
+        assertEquals(1, messages.size());
+        WiserMessage message = messages.get(0);
+        assertEquals(ADDRESSPATTY, message.getEnvelopeSender());
+        assertEquals(new InternetAddress(ADDRESSMARK), message.getMimeMessage().getFrom()[0]);
+        assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
     }
 
     @Test
