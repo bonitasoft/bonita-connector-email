@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>bonita-connector-email</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
 
     <properties>
         <bonita.engine.version>7.9.2</bonita.engine.version>
@@ -155,7 +155,7 @@
         <developerConnection>scm:git:https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/bonitasoft/bonita-connector-email.git</developerConnection>
         <connection>scm:git:https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/bonitasoft/bonita-connector-email.git</connection>
         <url>https://github.com/bonitasoft/bonita-connector-email</url>
-        <tag>HEAD</tag>
+        <tag>1.1.1</tag>
     </scm>
 
 </project>
