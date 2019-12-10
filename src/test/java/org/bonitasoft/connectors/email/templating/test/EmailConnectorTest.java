@@ -11,7 +11,7 @@
  * program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301, USA.
  **/
-package org.bonitasoft.connectors.email.test;
+package org.bonitasoft.connectors.email.templating.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -23,7 +23,6 @@ import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +40,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.IOUtils;
-import org.bonitasoft.connectors.email.EmailConnector;
+import org.bonitasoft.connectors.email.templating.EmailConnector;
 import org.bonitasoft.engine.api.APIAccessor;
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.bpm.document.Document;
@@ -308,7 +307,7 @@ public class EmailConnectorTest {
     @Test
     public void sendEmailWithPlainMessage() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
-        parameters.put("message", PLAINMESSAGE);
+        parameters.put("messageTemplate", PLAINMESSAGE);
         parameters.put("from", ADDRESSMARK);
         executeConnector(parameters);
 
@@ -324,10 +323,84 @@ public class EmailConnectorTest {
     }
 
     @Test
+    public void sendEmailWithReplacements() throws Exception {
+        //given
+        final Map<String, Object> parameters = getBasicSettings();
+        final List<List<Object>> replacements = Collections.singletonList(Arrays.asList("customer", (Object) "Walter Bates"));
+        parameters.put("html", false);
+        parameters.put("messageTemplate", "Dear ${customer}");
+        parameters.put("replacements", replacements);
+        parameters.put("from", ADDRESSMARK);
+
+        //when
+        executeConnector(parameters);
+
+        //then
+        final List<WiserMessage> messages = server.getMessages();
+        assertEquals(1, messages.size());
+        final WiserMessage message = messages.get(0);
+        assertEquals(ADDRESSMARK, message.getEnvelopeSender());
+        assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+        final MimeMessage mime = message.getMimeMessage();
+        assertEquals(SUBJECT, mime.getSubject());
+        assertTrue(mime.getContentType().contains(TEXT_PLAIN));
+        assertEquals("Dear Walter Bates", mime.getContent());
+    }
+
+    @Test
+    public void sendEmailWithEmptyReplacements() throws Exception {
+        //given
+        final Map<String, Object> parameters = getBasicSettings();
+        final List<List<Object>> replacements = Collections.singletonList(Arrays.asList("customer", (Object) null));
+        parameters.put("html", false);
+        parameters.put("messageTemplate", "Dear ${customer}");
+        parameters.put("replacements", replacements);
+        parameters.put("from", ADDRESSMARK);
+
+        //when
+        executeConnector(parameters);
+
+        //then
+        final List<WiserMessage> messages = server.getMessages();
+        assertEquals(1, messages.size());
+        final WiserMessage message = messages.get(0);
+        assertEquals(ADDRESSMARK, message.getEnvelopeSender());
+        assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+        final MimeMessage mime = message.getMimeMessage();
+        assertEquals(SUBJECT, mime.getSubject());
+        assertTrue(mime.getContentType().contains(TEXT_PLAIN));
+        assertEquals("Dear ", mime.getContent());
+    }
+
+    @Test
+    public void sendHtmlEmailWithReplacements() throws Exception {
+        //given
+        final Map<String, Object> parameters = getBasicSettings();
+        parameters.put("html", true);
+        parameters.put("messageTemplate", "<p>Dear ${customer}</p>");
+        final List<List<Object>> replacements = Collections.singletonList(Arrays.asList("customer", (Object) "Walter Bates"));
+        parameters.put("replacements", replacements);
+        parameters.put("from", ADDRESSMARK);
+
+        //when
+        executeConnector(parameters);
+
+        //then
+        final List<WiserMessage> messages = server.getMessages();
+        assertEquals(1, messages.size());
+        final WiserMessage message = messages.get(0);
+        assertEquals(ADDRESSMARK, message.getEnvelopeSender());
+        assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+        final MimeMessage mime = message.getMimeMessage();
+        assertEquals(SUBJECT, mime.getSubject());
+        assertTrue(mime.getContentType().contains(TEXT_HTML));
+        assertEquals("<p>Dear Walter Bates</p>", mime.getContent());
+    }
+    @Test
     public void sendEmailWithHtmlMessage() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("html", true);
-        parameters.put("message", HTMLMESSAGE);
+        parameters.put("messageTemplate", HTMLMESSAGE);
         parameters.put("from", ADDRESSMARK);
         executeConnector(parameters);
 
@@ -406,7 +479,7 @@ public class EmailConnectorTest {
     public void sendCyrillicEmail() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("subject", CYRILLIC_SUBJECT);
-        parameters.put("message", CYRILLIC_MESSAGE);
+        parameters.put("messageTemplate", CYRILLIC_MESSAGE);
         executeConnector(parameters);
 
         final List<WiserMessage> messages = server.getMessages();
@@ -424,7 +497,7 @@ public class EmailConnectorTest {
     public void sendBadEncodingCyrillicEmail() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("charset", "iso-8859-1");
-        parameters.put("message", CYRILLIC_MESSAGE);
+        parameters.put("messageTemplate", CYRILLIC_MESSAGE);
         executeConnector(parameters);
 
         final List<WiserMessage> messages = server.getMessages();
@@ -571,7 +644,7 @@ public class EmailConnectorTest {
         when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
         when(processAPI.getLastDocument(1L, "Document1")).thenReturn(document);
         Map<String, Object> parameters = getBasicSettings();
-        parameters.put(EmailConnector.MESSAGE, "Hello Mr message\n This is an email content");
+        parameters.put(EmailConnector.MESSAGE_TEMPLATE, "Hello Mr message\n This is an email content");
         List<String> attachments = Collections.singletonList("Document1");
         parameters.put(EmailConnector.ATTACHMENTS, attachments);
 
@@ -593,7 +666,7 @@ public class EmailConnectorTest {
         when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
         when(processAPI.getLastDocument(1L, "Document1")).thenReturn(document);
         Map<String, Object> parameters = getBasicSettings();
-        parameters.put(EmailConnector.MESSAGE, "Hello Mr message\n This is an email content");
+        parameters.put(EmailConnector.MESSAGE_TEMPLATE, "Hello Mr message\n This is an email content");
         List<String> attachments = Collections.singletonList("Document1");
         parameters.put(EmailConnector.ATTACHMENTS, attachments);
 

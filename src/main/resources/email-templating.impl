@@ -2,11 +2,11 @@
 <implementation:connectorImplementation xmlns:implementation="http://www.bonitasoft.org/ns/connector/implementation/6.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-	<definitionId>email</definitionId>
+	<definitionId>email-templating</definitionId>
 	<definitionVersion>1.1.0</definitionVersion>
-    <description>Implementation based on javax.mail 1.4.5</description>
-	<implementationClassname>org.bonitasoft.connectors.email.EmailConnector</implementationClassname>
-	<implementationId>email-impl</implementationId>
+    <description>Implementation based on javax.mail 1.4.7</description>
+	<implementationClassname>org.bonitasoft.connectors.email.templating.EmailConnector</implementationClassname>
+	<implementationId>email-templating-impl</implementationId>
 	<implementationVersion>$implementation.version$</implementationVersion>
 
 $Dependencies$

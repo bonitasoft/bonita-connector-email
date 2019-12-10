@@ -7,11 +7,11 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>bonita-connector-email</artifactId>
-    <version>1.2.2-SNAPSHOT</version>
+    <artifactId>bonita-connector-email-templating</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
-        <bonita.engine.version>7.9.2</bonita.engine.version>
+        <bonita.engine.version>7.9.4</bonita.engine.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -47,6 +47,16 @@
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <artifactId>junit</artifactId>
@@ -137,13 +147,13 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>email</id>
+                        <id>email-templating</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <descriptor>${basedir}/email-assembly.xml</descriptor>
+                            <descriptor>${basedir}/email-templating-assembly.xml</descriptor>
                         </configuration>
                     </execution>
                 </executions>
