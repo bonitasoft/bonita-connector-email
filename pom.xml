@@ -11,7 +11,7 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
-        <bonita.engine.version>7.9.4</bonita.engine.version>
+        <bonita.engine.version>7.10.1</bonita.engine.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -162,10 +162,9 @@
     </build>
 
     <scm>
-        <developerConnection>scm:git:https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/bonitasoft/bonita-connector-email.git</developerConnection>
-        <connection>scm:git:https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/bonitasoft/bonita-connector-email.git</connection>
-        <url>https://github.com/bonitasoft/bonita-connector-email</url>
+        <developerConnection>scm:git:git@github.com:laurentleseigneur/bonita-connector-email.git</developerConnection>
+        <connection>scm:git:git@github.com:laurentleseigneur/bonita-connector-email.git</connection>
+        <url>https://github.com/laurentleseigneur/bonita-connector-email</url>
         <tag>HEAD</tag>
     </scm>
-
 </project>

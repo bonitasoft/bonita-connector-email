@@ -211,9 +211,6 @@ public class EmailConnector extends AbstractConnector {
 	}
 
 	private void logInputParameters() {
-		if (!LOGGER.isLoggable(Level.INFO)) {
-			return;
-		}
 		logInputParameter(CHARSET);
 		logInputParameter(MESSAGE_TEMPLATE);
 		logInputReplacementParameter(REPLACEMENTS);
@@ -263,14 +260,14 @@ public class EmailConnector extends AbstractConnector {
 						value = String.valueOf(objects.get(1));
 					}
 					String key = String.valueOf(objects.get(0));
-					LOGGER.info("replacement value: " + key + "=[" + value + "]");
+					LOGGER.fine("replacement value: " + key + "=[" + value + "]");
 				}
 			}
 		}
 	}
 
 	private void logInputParameter(String parameterName) {
-		LOGGER.info(parameterName + " " + String.valueOf(getInputParameter(parameterName)));
+		LOGGER.fine(parameterName + " " + String.valueOf(getInputParameter(parameterName)));
 	}
 
 	private void checkInputParameter(String parameter, List<String> errors) {

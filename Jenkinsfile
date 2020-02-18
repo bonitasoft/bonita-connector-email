@@ -1,16 +1,12 @@
 timestamps {
     ansiColor('xterm') {
-        node ('bcd-794') {
+        node ('bcd-7101') {
             stage('Checkout') {
                 checkout scm
             }
             stage('Build') {
                 try {
-                    if(env.BRANCH_NAME.equals('master')){
-                      sh "./mvnw -B clean install -Djvm=${env.JAVA_HOME_11}/bin/java -DaltDeploymentRepository=${env.ALT_DEPLOYMENT_REPOSITORY_SNAPSHOTS}"
-                    }else{
-                       sh "./mvnw -B clean verify -Djvm=${env.JAVA_HOME_11}/bin/java"
-                    }
+                    sh "./mvnw -B clean verify "
                     archiveArtifacts 'target/bonita-connector-email-*.zip'
                 } finally {
                     junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
