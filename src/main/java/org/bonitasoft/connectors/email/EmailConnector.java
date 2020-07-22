@@ -265,6 +265,11 @@ public class EmailConnector extends AbstractConnector {
      */
     private Session getSession() {
         final Properties properties = new Properties();
+        //trust the host certificate
+        //this property doesn't work : properties.put("mail.smtp.ssl.trust", getInputParameter(SMTP_HOST));
+        properties.put("mail.smtp.socketFactory.class", AlwaysTrustSSLContextFactory.class.getCanonicalName());
+
+        //end of config that should be parametrized
         properties.put("mail.smtp.host", getInputParameter(SMTP_HOST));
         final String smtpPort = String.valueOf(getInputParameter(SMTP_PORT));
         properties.put("mail.smtp.port", smtpPort);

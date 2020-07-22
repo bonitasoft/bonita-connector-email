@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>bonita-connector-email</artifactId>
-    <version>1.2.3-SNAPSHOT</version>
+    <version>1.2.3-autotrust</version>
 
     <properties>
         <bonita.engine.version>7.9.2</bonita.engine.version>
