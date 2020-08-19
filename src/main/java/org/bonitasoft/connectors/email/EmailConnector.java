@@ -37,7 +37,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
@@ -151,7 +150,7 @@ public class EmailConnector extends AbstractConnector {
     public void validateInputParameters() throws ConnectorValidationException {
         // FIXME: handle replyTo parameter (not implemented yet):
         logInputParameters();
-        List<String> errors = new ArrayList<String>(1);
+        List<String> errors = new ArrayList<>(1);
         final Integer smtpPort = (Integer) getInputParameter(SMTP_PORT);
 
         if (smtpPort == null) {
@@ -171,7 +170,7 @@ public class EmailConnector extends AbstractConnector {
 
         final String from = (String) getInputParameter(FROM);
         checkInputParameter(from, errors);
-        
+
         final String returnPath = (String) getInputParameter(RETURN_PATH);
         checkInputParameter(from, errors);
 
@@ -282,6 +281,7 @@ public class EmailConnector extends AbstractConnector {
         // Using SSL
         if ((Boolean) getInputParameter(SSL_SUPPORT, true)) {
             properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            properties.put("mail.smtp.ssl.checkserveridentity", "true");
             properties.put("mail.smtp.socketFactory.fallback", "false");
             properties.put("mail.smtp.socketFactory.port", smtpPort);
         }
@@ -300,7 +300,7 @@ public class EmailConnector extends AbstractConnector {
 
     private Map<String, String> getHeaders() {
         final List<List<Object>> headersList = (List<List<Object>>) getInputParameter(HEADERS);
-        final Map<String, String> headers = new HashMap<String, String>();
+        final Map<String, String> headers = new HashMap<>();
         if (headersList != null) {
             for (List<Object> rows : headersList) {
                 if (rows.size() == 2) {
@@ -396,7 +396,7 @@ public class EmailConnector extends AbstractConnector {
             StringBuilder messageBody = new StringBuilder(message);
             ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
             final Multipart body = new MimeMultipart("mixed");
-            List<MimeBodyPart> bodyParts = new ArrayList<MimeBodyPart>();
+            List<MimeBodyPart> bodyParts = new ArrayList<>();
             if (attachments != null) {
                 for (Object attachment : attachments) {
                     handleAttachment(html, messageBody, processAPI, bodyParts, attachment);
