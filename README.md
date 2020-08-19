@@ -10,7 +10,7 @@
 
 __Clone__ or __fork__ this repository, then at the root of the project run:
 
-`./mvnw` 
+`./mvnw`
 
 ## Release
 
