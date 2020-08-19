@@ -1,20 +1,74 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>bonita-connectors</artifactId>
-        <groupId>org.bonitasoft.connectors</groupId>
-        <version>1.0.0</version>
-    </parent>
-
+    <groupId>org.bonitasoft.connectors</groupId>
     <artifactId>bonita-connector-email</artifactId>
     <version>1.2.3-SNAPSHOT</version>
 
+    <name>Bonita email Connector</name>
+    <description>Email Connector for Bonita</description>
+    <url>https://www.bonitasoft.com</url>
+    
+    <developers>
+        <developer>
+            <id>bonitasoft</id>
+            <name>Bonitasoft</name>
+            <email>rd.user@bonitasoft.com</email>
+            <organization>Bonitasoft</organization>
+            <organizationUrl>https://www.bonitasoft.com</organizationUrl>
+        </developer>
+    </developers>
+    
+    <licenses>
+        <license>
+            <name>GPL-v2.0</name>
+            <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+        </license>
+    </licenses>
+
+
     <properties>
-        <bonita.engine.version>7.9.2</bonita.engine.version>
+        <!-- Maven -->
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.build.timestamp.format>yyyy.MM.dd-hh.mm</maven.build.timestamp.format>
+        
+        <!--Email Connector -->
+        <email.def.id>email</email.def.id>
+        <email.def.version>1.1.0</email.def.version>
+        <email.impl.id>${email.def.id}-impl</email.impl.id>
+        <email.impl.version>${project.version}</email.impl.version>
+        <email.main-class>org.bonitasoft.connectors.email.EmailConnector</email.main-class>
+    
+        <!-- Connector dependencies -->
+        <javax.activation.version>1.1</javax.activation.version>
+        <javax.mail.version>1.4.7</javax.mail.version>
+    
+        <!-- Bonita -->
+        <bonita.engine.version>7.11.0</bonita.engine.version>
+        
+        <!-- Test -->
+        <subethamail.version>3.1.5</subethamail.version>
+        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+        
+        <!-- Maven plugins -->
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
+        <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
+        <groovy-all.version>2.4.16</groovy-all.version>
+        <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
+    
+        <!-- Sonar -->
+        <sonar.projectKey>bonitasoft_bonita-connector-uipath</sonar.projectKey>
+        <sonar.organization>bonitasoft</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
@@ -29,7 +83,7 @@
             <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
-                <version>1.1</version>
+                <version>${javax.activation.version}</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -37,17 +91,22 @@
 
 
     <dependencies>
+        <!-- Bonita -->
         <dependency>
             <artifactId>bonita-common</artifactId>
             <groupId>org.bonitasoft.engine</groupId>
             <version>${bonita.engine.version}</version>
             <scope>provided</scope>
         </dependency>
+        
+        <!--  Javax -->
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.7</version>
+            <version>${javax.mail.version}</version>
         </dependency>
+        
+        <!-- Test -->
         <dependency>
             <artifactId>junit</artifactId>
             <groupId>junit</groupId>
@@ -66,7 +125,7 @@
         <dependency>
             <groupId>org.subethamail</groupId>
             <artifactId>subethasmtp</artifactId>
-            <version>3.1.5</version>
+            <version>${subethamail.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -77,83 +136,214 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.23.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
+        <defaultGoal>verify</defaultGoal>
+        <resources>
+            <resource>
+                <directory>src/main/resources-filtered</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
-                    <configuration>
-                        <tagNameFormat>@{project.version}</tagNameFormat>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>${maven-assembly-plugin.version}</version>
+                    <configuration>
+                        <descriptorSourceDirectory>${project.basedir}/src/assembly</descriptorSourceDirectory>
+                    </configuration>
                     <executions>
                         <execution>
-                            <id>assemble</id>
-                            <phase>none</phase>
+                            <id>package-connectors</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <appendAssemblyId>true</appendAssemblyId>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>groovy-maven-plugin</artifactId>
+                    <version>${groovy-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-all</artifactId>
+                            <version>${groovy-all.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <testSource>1.8</testSource>
-                    <testTarget>1.8</testTarget>
+                        <enableAssertions>true</enableAssertions>
+                        <forkCount>1</forkCount>
+                        <reuseForks>true</reuseForks>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                    <configuration>
+                        <append>true</append>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>prepare-agent-integration</id>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>jacoco-site</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>all</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <descriptor>${basedir}/connector-assembly.xml</descriptor>
-                            <appendAssemblyId>true</appendAssemblyId>
+                            <source>${project.basedir}/src/script/dependencies-as-var.groovy</source>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
                     <execution>
-                        <id>email</id>
-                        <phase>package</phase>
+                        <id>attach-sources</id>
                         <goals>
-                            <goal>single</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
-                        <configuration>
-                            <descriptor>${basedir}/email-assembly.xml</descriptor>
-                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <!-- Deployment profile (required so these plugins are only used when deploying) -->
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <!-- GPG plugin -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Prevent `gpg` from using pinentry programs -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <!-- Central Repository -->
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <scm>
-        <developerConnection>scm:git:https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/bonitasoft/bonita-connector-email.git</developerConnection>
-        <connection>scm:git:https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/bonitasoft/bonita-connector-email.git</connection>
+        <developerConnection>scm:git:git@github.com:bonitasoft/bonita-connector-email.git</developerConnection>
+        <connection>scm:git:git@github.com:bonitasoft/bonita-connector-email.git</connection>
         <url>https://github.com/bonitasoft/bonita-connector-email</url>
         <tag>HEAD</tag>
     </scm>
