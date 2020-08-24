@@ -272,11 +272,13 @@ public class EmailConnector extends AbstractConnector {
             properties.put("mail.smtp.from", returnPath);
         }
         // Using STARTTLS
-        if ((boolean) getInputParameter(STARTTLS_SUPPORT, false)) {
+        Boolean startTlsParameter = (Boolean) getInputParameter(STARTTLS_SUPPORT, false);
+        if (Boolean.TRUE.equals(startTlsParameter)) {
             properties.put("mail.smtp.starttls.enable", "true");
         }
         // Using SSL
-        if ((boolean) getInputParameter(SSL_SUPPORT, true)) {
+        Boolean sslParameter = (Boolean) getInputParameter(SSL_SUPPORT, true);
+        if (Boolean.TRUE.equals(sslParameter)) {
             properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             properties.put("mail.smtp.ssl.checkserveridentity", "true");
             properties.put("mail.smtp.socketFactory.fallback", "false");
