@@ -363,7 +363,7 @@ public class EmailConnector extends AbstractConnector {
         }
     }
 
-    private void setMessageAddresses(MimeMessage mimeMessage) throws MessagingException, AddressException {
+    private void setMessageAddresses(MimeMessage mimeMessage) throws MessagingException {
         String from = (String) getInputParameter(FROM);
         String to = (String) getInputParameter(TO);
         String cc = (String) getInputParameter(CC);
