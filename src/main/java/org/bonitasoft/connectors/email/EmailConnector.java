@@ -37,7 +37,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
@@ -145,13 +144,12 @@ public class EmailConnector extends AbstractConnector {
      */
     public static final String SMTP_HOST = "smtpHost";
 
-    private Logger LOGGER = Logger.getLogger(this.getClass().getName());
+    private Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Override
     public void validateInputParameters() throws ConnectorValidationException {
-        // FIXME: handle replyTo parameter (not implemented yet):
         logInputParameters();
-        List<String> errors = new ArrayList<String>(1);
+        List<String> errors = new ArrayList<>(1);
         final Integer smtpPort = (Integer) getInputParameter(SMTP_PORT);
 
         if (smtpPort == null) {
@@ -171,9 +169,9 @@ public class EmailConnector extends AbstractConnector {
 
         final String from = (String) getInputParameter(FROM);
         checkInputParameter(from, errors);
-        
+
         final String returnPath = (String) getInputParameter(RETURN_PATH);
-        checkInputParameter(from, errors);
+        checkInputParameter(returnPath, errors);
 
         final String to = (String) getInputParameter(TO);
         checkInputParameter(to, errors);
@@ -196,7 +194,7 @@ public class EmailConnector extends AbstractConnector {
     }
 
     private void logInputParameters() {
-        if (!LOGGER.isLoggable(Level.INFO)) {
+        if (!logger.isLoggable(Level.INFO)) {
             return;
         }
         logInputParameter(CHARSET);
@@ -215,37 +213,35 @@ public class EmailConnector extends AbstractConnector {
         logInputParameter(SMTP_HOST);
         logInputParameter(REPLY_TO);
 
-        LOGGER.info(PASSWORD + " ******");
+        logger.info(PASSWORD + " ******");
         List<Object> attachments = (List<Object>) getInputParameter(ATTACHMENTS);
 
         if (attachments == null) {
-            LOGGER.info("Attachments null");
+            logger.info("Attachments null");
         } else {
             for (Object attachment : attachments) {
-                LOGGER.info("Attachment " + attachment);
+                logger.info(() -> "Attachment " + attachment);
             }
         }
 
         Map<String, String> headers = getHeaders();
-        if (headers == null || headers.isEmpty()) {
-            LOGGER.info("Headers null");
+        if (headers.isEmpty()) {
+            logger.info("Headers null");
         } else {
             for (Entry<String, String> header : headers.entrySet()) {
-                LOGGER.info("Header " + header.getKey() + " " + header.getValue());
+                logger.info("Header " + header.getKey() + " " + header.getValue());
             }
         }
         logInputParameter(HEADERS);
     }
 
     private void logInputParameter(String parameterName) {
-        LOGGER.info(parameterName + " " + String.valueOf(getInputParameter(parameterName)));
+        logger.info(() -> parameterName + " " + getInputParameter(parameterName));
     }
 
     private void checkInputParameter(String parameter, List<String> errors) {
-        if (parameter != null && !parameter.isEmpty()) {
-            if (!checkAddresses(parameter)) {
-                errors.add(parameter + " address in invalid");
-            }
+        if (parameter != null && !parameter.isEmpty() && !checkAddresses(parameter)) {
+            errors.add(parameter + " address in invalid");
         }
     }
 
@@ -281,12 +277,15 @@ public class EmailConnector extends AbstractConnector {
             properties.put("mail.smtp.from", returnPath);
         }
         // Using STARTTLS
-        if ((Boolean) getInputParameter(STARTTLS_SUPPORT, false)) {
+        Boolean startTlsParameter = (Boolean) getInputParameter(STARTTLS_SUPPORT, false);
+        if (Boolean.TRUE.equals(startTlsParameter)) {
             properties.put("mail.smtp.starttls.enable", "true");
         }
         // Using SSL
-        if ((Boolean) getInputParameter(SSL_SUPPORT, true)) {
+        Boolean sslParameter = (Boolean) getInputParameter(SSL_SUPPORT, true);
+        if (Boolean.TRUE.equals(sslParameter)) {
             properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            properties.put("mail.smtp.ssl.checkserveridentity", "true");
             properties.put("mail.smtp.socketFactory.fallback", "false");
             properties.put("mail.smtp.socketFactory.port", smtpPort);
         }
@@ -305,7 +304,7 @@ public class EmailConnector extends AbstractConnector {
 
     private Map<String, String> getHeaders() {
         final List<List<Object>> headersList = (List<List<Object>>) getInputParameter(HEADERS);
-        final Map<String, String> headers = new HashMap<String, String>();
+        final Map<String, String> headers = new HashMap<>();
         if (headersList != null) {
             for (List<Object> rows : headersList) {
                 if (rows.size() == 2) {
@@ -330,29 +329,57 @@ public class EmailConnector extends AbstractConnector {
      * @throws AddressException
      *         if an exception occurs
      */
-    private MimeMessage getEmail(final Session emailSession) throws ConnectorException, MessagingException {
-        final MimeMessage mimeMessage = new MimeMessage(emailSession);
-        final String from = (String) getInputParameter(FROM);
+    private MimeMessage getEmail(Session emailSession) throws ConnectorException {
+        MimeMessage mimeMessage = new MimeMessage(emailSession);
         try {
-            if (from != null && !from.isEmpty()) {
-                mimeMessage.setFrom(new InternetAddress(from));
-            } else {
-                mimeMessage.setFrom();
-            }
+            setMessageAddresses(mimeMessage);
+            setMessageContent(mimeMessage);
+            mimeMessage.setSentDate(new Date());
         } catch (MessagingException me) {
             throw new ConnectorException(me.getMessage(), me.getCause());
         }
-        final String to = (String) getInputParameter(TO);
-        final String cc = (String) getInputParameter(CC);
+        return mimeMessage;
+    }
+
+    private void setMessageContent(MimeMessage mimeMessage) throws MessagingException, ConnectorException {
+        String subject = (String) getInputParameter(SUBJECT);
+        String charset = (String) getInputParameter(CHARSET, "UTF-8");
+        String message = (String) getInputParameter(MESSAGE, "");
+        List<Object> attachments = (List<Object>) getInputParameter(ATTACHMENTS);
+        boolean html = (Boolean) getInputParameter(HTML, true);
+
+        mimeMessage.setSubject(subject, charset);
+
+        for (Map.Entry<String, String> h : getHeaders().entrySet()) {
+            if (h.getKey() != null && h.getValue() != null && !h.getKey().equals("Content-ID")) {
+                mimeMessage.setHeader(h.getKey(), h.getValue());
+            }
+        }
+
+        if (attachments != null) {
+            final Multipart multipart = getMultipart(html, message, charset, attachments);
+            mimeMessage.setContent(multipart);
+        } else {
+            if (html) {
+                mimeMessage.setText(message, charset, HTML);
+            } else {
+                mimeMessage.setText(message, charset);
+            }
+        }
+    }
+
+    private void setMessageAddresses(MimeMessage mimeMessage) throws MessagingException {
+        String from = (String) getInputParameter(FROM);
+        String to = (String) getInputParameter(TO);
+        String cc = (String) getInputParameter(CC);
+        String bcc = (String) getInputParameter(BCC);
         String replyTo = (String) getInputParameter(REPLY_TO);
 
-        final String bcc = (String) getInputParameter(BCC);
-        final String subject = (String) getInputParameter(SUBJECT);
-        final String charset = (String) getInputParameter(CHARSET, "UTF-8");
-        @SuppressWarnings("unchecked")
-        final List<Object> attachments = (List<Object>) getInputParameter(ATTACHMENTS);
-        final String message = (String) getInputParameter(MESSAGE, "");
-        final boolean html = (Boolean) getInputParameter(HTML, true);
+        if (from != null && !from.isEmpty()) {
+            mimeMessage.setFrom(new InternetAddress(from));
+        } else {
+            mimeMessage.setFrom();
+        }
         mimeMessage.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
         if (cc != null && !cc.isEmpty()) {
             mimeMessage.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc, false));
@@ -360,35 +387,9 @@ public class EmailConnector extends AbstractConnector {
         if (bcc != null && !bcc.isEmpty()) {
             mimeMessage.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc, false));
         }
-
         if (replyTo != null && !replyTo.isEmpty()) {
             mimeMessage.setReplyTo(InternetAddress.parse(replyTo));
         }
-
-        mimeMessage.setSubject(subject, charset);
-        // Headers
-        final Map<String, String> headers = getHeaders();
-        for (final Map.Entry<String, String> h : headers.entrySet()) {
-            if (h.getKey() != null && h.getValue() != null) {
-                if (!h.getKey().equals("Content-ID")) {
-                    mimeMessage.setHeader(h.getKey(), h.getValue());
-                }
-            }
-        }
-        if (attachments != null) {
-            final Multipart multipart = getMultipart(html, message, charset, attachments);
-            mimeMessage.setContent(multipart);
-        } else {
-            // the simplest message
-            if (html) {
-                mimeMessage.setText(message, charset, HTML);
-            } else {
-                mimeMessage.setText(message, charset);
-            }
-        }
-
-        mimeMessage.setSentDate(new Date());
-        return mimeMessage;
     }
 
     /**
@@ -401,7 +402,7 @@ public class EmailConnector extends AbstractConnector {
             StringBuilder messageBody = new StringBuilder(message);
             ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
             final Multipart body = new MimeMultipart("mixed");
-            List<MimeBodyPart> bodyParts = new ArrayList<MimeBodyPart>();
+            List<MimeBodyPart> bodyParts = new ArrayList<>();
             if (attachments != null) {
                 for (Object attachment : attachments) {
                     handleAttachment(html, messageBody, processAPI, bodyParts, attachment);

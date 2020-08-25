@@ -23,7 +23,6 @@ import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
@@ -41,6 +41,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.IOUtils;
+import org.awaitility.Awaitility;
 import org.bonitasoft.connectors.email.EmailConnector;
 import org.bonitasoft.engine.api.APIAccessor;
 import org.bonitasoft.engine.api.ProcessAPI;
@@ -106,7 +107,7 @@ public class EmailConnectorTest {
     }
 
     @After
-    public void tearDown() throws InterruptedException {
+    public void tearDown() {
         if (server != null) {
             stopServer();
         }
@@ -143,9 +144,8 @@ public class EmailConnectorTest {
         }
     }
 
-    private void stopServer() throws InterruptedException {
-        server.stop();
-        Thread.sleep(150);
+    private void stopServer() {
+        Awaitility.await().atMost(150, TimeUnit.MILLISECONDS).until(() -> server.stop());
         server = null;
     }
 
@@ -159,7 +159,7 @@ public class EmailConnectorTest {
     }
 
     private Map<String, Object> getBasicSettings() {
-        final Map<String, Object> parameters = new HashMap<String, Object>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put("smtpHost", SMTP_HOST);
         parameters.put("smtpPort", smtpPort);
         parameters.put("to", ADDRESSJOHN);
@@ -172,7 +172,7 @@ public class EmailConnectorTest {
     //    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
     //            story = "Test the sending of a simple email through the connector", jira = "")
     @Test
-    public void sendASimpleEmail() throws BonitaException, MessagingException, InterruptedException {
+    public void sendASimpleEmail() throws BonitaException, MessagingException {
         executeConnector(getBasicSettings());
         final List<WiserMessage> messages = server.getMessages();
         assertEquals(1, messages.size());
@@ -222,8 +222,8 @@ public class EmailConnectorTest {
     // BI-284 - [6.0.2] Email connector fails if one header row is empty
     @Test
     public void connector_dont_fail_if_an_header_line_contains_only_one_element() throws Exception {
-        List<List<Object>> headers = new ArrayList<List<Object>>();
-        List<Object> line = new ArrayList<Object>();
+        List<List<Object>> headers = new ArrayList<>();
+        List<Object> line = new ArrayList<>();
         line.add("");
         headers.add(line);
         Map<String, Object> parameters = getBasicSettings();
@@ -289,7 +289,7 @@ public class EmailConnectorTest {
         assertEquals(SUBJECT, mime.getSubject());
         assertEquals(0, mime.getSize());
     }
-    
+
     @Test
     public void sendEmailWithReturnPathAddress() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
@@ -344,38 +344,38 @@ public class EmailConnectorTest {
 
     @Test
     public void sendEmailWithExtraHeaders() throws Exception {
-        final List<List<String>> headers = new ArrayList<List<String>>();
-        List<String> row1 = new ArrayList<String>();
+        final List<List<String>> headers = new ArrayList<>();
+        List<String> row1 = new ArrayList<>();
         row1.add("X-Mailer");
         row1.add("Bonita Mailer");
         headers.add(row1);
 
-        List<String> row2 = new ArrayList<String>();
+        List<String> row2 = new ArrayList<>();
         row2.add("Message-ID");
         row2.add("IWantToHackTheServer");
         headers.add(row2);
 
-        List<String> row3 = new ArrayList<String>();
+        List<String> row3 = new ArrayList<>();
         row3.add("X-Priority");
         row3.add("2 (High)");
         headers.add(row3);
 
-        List<String> row4 = new ArrayList<String>();
+        List<String> row4 = new ArrayList<>();
         row4.add("Content-Type");
         row4.add("video/mpeg");
         headers.add(row4);
 
-        List<String> row5 = new ArrayList<String>();
+        List<String> row5 = new ArrayList<>();
         row5.add("WhatIWant");
         row5.add("anyValue");
         headers.add(row5);
 
-        List<String> row6 = new ArrayList<String>();
+        List<String> row6 = new ArrayList<>();
         row6.add("From");
         row6.add("alice@bob.charly");
         headers.add(row6);
 
-        List<String> row7 = new ArrayList<String>();
+        List<String> row7 = new ArrayList<>();
         row7.add(null);
         row7.add(null);
         headers.add(row7);
@@ -461,11 +461,12 @@ public class EmailConnectorTest {
 
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
-        assertThat(((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(1).getFileName()).isEqualTo("filename.txt");
+        assertThat(((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(1).getFileName())
+                .isEqualTo("filename.txt");
         // BS-11239 : change multipart mime type in order to have attachments openable on iPhone
         assertThat(messages.get(0).getMimeMessage().getContentType()).startsWith("multipart/mixed;");
     }
-    
+
     @Test
     public void sendFileDocumentWithSpecialEncoding() throws BonitaException, MessagingException, IOException {
         DocumentImpl document = new DocumentImpl();
@@ -489,7 +490,8 @@ public class EmailConnectorTest {
 
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
-        assertThat(((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(1).getFileName()).isEqualTo(MimeUtility.encodeText("最日本最.TXT"));
+        assertThat(((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(1).getFileName())
+                .isEqualTo(MimeUtility.encodeText("最日本最.TXT"));
     }
 
     @Test
@@ -531,11 +533,9 @@ public class EmailConnectorTest {
         assertThat(new String(contents.get(3))).isEqualTo("toto3");
         assertThat(new String(contents.get(4))).isEqualTo("toto4");
     }
-    
-    
 
     private List<byte[]> getAttachmentsContent(MimeMultipart multipart) throws MessagingException, IOException {
-        List<byte[]> attachments = new ArrayList<byte[]>();
+        List<byte[]> attachments = new ArrayList<>();
         for (int i = 0; i < multipart.getCount(); i++) {
             BodyPart bodyPart = multipart.getBodyPart(i);
             attachments.add(IOUtils.toByteArray(bodyPart.getInputStream()));
@@ -579,7 +579,8 @@ public class EmailConnectorTest {
 
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
-        assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent()).contains("http://www.bonitasoft.com");
+        assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent())
+                .contains("http://www.bonitasoft.com");
     }
 
     @Test
@@ -601,7 +602,8 @@ public class EmailConnectorTest {
 
         List<WiserMessage> messages = server.getMessages();
         assumeNotNull(messages);
-        assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent()).doesNotContain("Document1");
+        assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent())
+                .doesNotContain("Document1");
 
     }
 
