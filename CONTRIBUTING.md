@@ -38,5 +38,4 @@ And  `category`  can be anything of your choice. If you use a type not found in 
 
 Ensure that your contribution is correctly tested: 
 
- - Any update on the generated project must be tested through the generated unit tests
- - Any update on the archetype must be tested through the integration test suite (*src/test/resources/projects*)
+ - Any update must be tested, at least through unit tests.
