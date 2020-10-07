@@ -1,17 +1,21 @@
-/**
- * Copyright (C) 2012 BonitaSoft S.A.
- * BonitaSoft, 32 rue Gustave Eiffel - 38000 Grenoble
- * This library is free software; you can redistribute it and/or modify it under the terms
- * of the GNU Lesser General Public License as published by the Free Software Foundation
- * version 2.1 of the License.
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
- * Floor, Boston, MA 02110-1301, USA.
- **/
-package org.bonitasoft.connectors.email.test;
+/*
+ * Copyright (C) 2009 - 2020 Bonitasoft S.A.
+ * Bonitasoft, 32 rue Gustave Eiffel - 38000 Grenoble
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2.0 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package org.bonitasoft.connectors.email;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -35,14 +39,17 @@ import java.util.concurrent.TimeUnit;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.awaitility.Awaitility;
-import org.bonitasoft.connectors.email.EmailConnector;
+import org.bonitasoft.connectors.email.ssl.AlwaysTrustDefaultSSLContextFactory;
+import org.bonitasoft.connectors.email.ssl.AlwaysTrustTLSSSLContextFactory;
 import org.bonitasoft.engine.api.APIAccessor;
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.bpm.document.Document;
@@ -50,23 +57,21 @@ import org.bonitasoft.engine.bpm.document.DocumentNotFoundException;
 import org.bonitasoft.engine.bpm.document.impl.DocumentImpl;
 import org.bonitasoft.engine.connector.EngineExecutionContext;
 import org.bonitasoft.engine.exception.BonitaException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
-// import org.bonitasoft.engine.test.annotation.Cover;
-// import org.bonitasoft.engine.test.annotation.Cover.BPMNConcept;
 
-/**
- * @author Matthieu Chaffotte
- */
-@RunWith(MockitoJUnitRunner.class)
-public class EmailConnectorTest {
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class EmailConnectorTest {
 
     private static final String SMTP_HOST = "localhost";
 
@@ -100,13 +105,13 @@ public class EmailConnectorTest {
     @Mock
     private ProcessAPI processAPI;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(apiAccessor.getProcessAPI()).thenReturn(processAPI);
         startServer();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (server != null) {
             stopServer();
@@ -169,10 +174,8 @@ public class EmailConnectorTest {
         return parameters;
     }
 
-    //    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-    //            story = "Test the sending of a simple email through the connector", jira = "")
     @Test
-    public void sendASimpleEmail() throws BonitaException, MessagingException {
+    void sendASimpleEmail() throws BonitaException, MessagingException {
         executeConnector(getBasicSettings());
         final List<WiserMessage> messages = server.getMessages();
         assertEquals(1, messages.size());
@@ -184,10 +187,8 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
-    //    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-    //            story = "Test the sending of a email with field from filled through the connector", jira = "")
     @Test
-    public void testSendEmailWithFromAddress() throws Exception {
+    void testSendEmailWithFromAddress() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("from", ADDRESSMARK);
         executeConnector(parameters);
@@ -201,10 +202,8 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
-    //    @Cover(classes = { EmailConnector.class }, concept = BPMNConcept.CONNECTOR, keywords = { "email" },
-    //            story = "Test the sending of a email with authentification through the connector", jira = "")
     @Test
-    public void testSendEmailWithAutentication() throws Exception {
+    void testSendEmailWithAutentication() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("userName", "john");
         parameters.put("password", "doe");
@@ -219,9 +218,8 @@ public class EmailConnectorTest {
         assertEquals(0, mime.getSize());
     }
 
-    // BI-284 - [6.0.2] Email connector fails if one header row is empty
     @Test
-    public void connector_dont_fail_if_an_header_line_contains_only_one_element() throws Exception {
+    void connector_dont_fail_if_an_header_line_contains_only_one_element() throws Exception {
         List<List<Object>> headers = new ArrayList<>();
         List<Object> line = new ArrayList<>();
         line.add("");
@@ -233,7 +231,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendEmailWithToRecipientsAddresses() throws Exception {
+    void sendEmailWithToRecipientsAddresses() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("to", ADDRESSJOHN + ", " + ADDRESSPATTY);
         parameters.put("from", ADDRESSMARK);
@@ -256,7 +254,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendEmailWithCcRecipientsAddresses() throws Exception {
+    void sendEmailWithCcRecipientsAddresses() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("cc", ADDRESSPATTY);
         parameters.put("from", ADDRESSMARK);
@@ -291,7 +289,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendEmailWithReturnPathAddress() throws Exception {
+    void sendEmailWithReturnPathAddress() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("returnPath", ADDRESSPATTY);
         parameters.put("from", ADDRESSMARK);
@@ -306,7 +304,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendEmailWithPlainMessage() throws Exception {
+    void sendEmailWithPlainMessage() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("message", PLAINMESSAGE);
         parameters.put("from", ADDRESSMARK);
@@ -324,7 +322,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendEmailWithHtmlMessage() throws Exception {
+    void sendEmailWithHtmlMessage() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("html", true);
         parameters.put("message", HTMLMESSAGE);
@@ -343,7 +341,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendEmailWithExtraHeaders() throws Exception {
+    void sendEmailWithExtraHeaders() throws Exception {
         final List<List<String>> headers = new ArrayList<>();
         List<String> row1 = new ArrayList<>();
         row1.add("X-Mailer");
@@ -403,7 +401,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendCyrillicEmail() throws Exception {
+    void sendCyrillicEmail() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("subject", CYRILLIC_SUBJECT);
         parameters.put("message", CYRILLIC_MESSAGE);
@@ -421,7 +419,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendBadEncodingCyrillicEmail() throws Exception {
+    void sendBadEncodingCyrillicEmail() throws Exception {
         final Map<String, Object> parameters = getBasicSettings();
         parameters.put("charset", "iso-8859-1");
         parameters.put("message", CYRILLIC_MESSAGE);
@@ -439,7 +437,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendFileDocument() throws BonitaException, MessagingException, IOException {
+    void sendFileDocument() throws BonitaException, MessagingException, IOException {
         DocumentImpl document = new DocumentImpl();
         document.setAuthor(1);
         document.setContentMimeType("application/octet-stream");
@@ -468,7 +466,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendFileDocumentWithSpecialEncoding() throws BonitaException, MessagingException, IOException {
+    void sendFileDocumentWithSpecialEncoding() throws BonitaException, MessagingException, IOException {
         DocumentImpl document = new DocumentImpl();
         document.setAuthor(1);
         document.setContentMimeType("application/octet-stream");
@@ -495,7 +493,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendWithDocumentList() throws BonitaException, MessagingException, IOException {
+    void sendWithDocumentList() throws BonitaException, MessagingException, IOException {
         DocumentImpl document1 = createDocument(1L, "toto1");
         DocumentImpl document2 = createDocument(2L, "toto2");
         List<Document> documents = Arrays.<Document> asList(document1, document2);
@@ -512,14 +510,14 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendWithMultipleDocumentList() throws BonitaException, MessagingException, IOException {
+    void sendWithMultipleDocumentList() throws BonitaException, MessagingException, IOException {
         DocumentImpl document1 = createDocument(1L, "toto1");
         DocumentImpl document2 = createDocument(2L, "toto2");
         DocumentImpl document3 = createDocument(3L, "toto3");
         DocumentImpl document4 = createDocument(4L, "toto4");
         List<Document> documents1 = Arrays.<Document> asList(document1, document2);
         List<Document> documents2 = Arrays.<Document> asList(document3, document4);
-        List lists = Arrays.asList(documents1, documents2);
+        List<?> lists = Arrays.asList(documents1, documents2);
         Map<String, Object> parameters = getBasicSettings();
         parameters.put(EmailConnector.ATTACHMENTS, lists);
 
@@ -559,7 +557,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendUrlDocument() throws BonitaException, MessagingException, IOException {
+    void sendUrlDocument() throws BonitaException, MessagingException, IOException {
         DocumentImpl document = new DocumentImpl();
         document.setAuthor(1);
         document.setCreationDate(new Date());
@@ -584,7 +582,7 @@ public class EmailConnectorTest {
     }
 
     @Test
-    public void sendMailWithEmptyDocument() throws BonitaException, MessagingException, IOException {
+    void sendMailWithEmptyDocument() throws BonitaException, MessagingException, IOException {
         DocumentImpl document = new DocumentImpl();
         document.setAuthor(1);
         document.setCreationDate(new Date());
@@ -605,6 +603,55 @@ public class EmailConnectorTest {
         assertThat((String) ((MimeMultipart) messages.get(0).getMimeMessage().getContent()).getBodyPart(0).getContent())
                 .doesNotContain("Document1");
 
+    }
+    
+    @Test
+    void should_use_custom_default_ssl_socket_factory_when_autotrust_is_true() throws Exception {
+        final Map<String, Object> parameters = getBasicSettings();
+        parameters.put(EmailConnector.AUTOTRUST_CERTIFICATE, true);
+        parameters.put(EmailConnector.SSL_SUPPORT, true);
+        final EmailConnector email = new EmailConnector();
+        email.setExecutionContext(engineExecutionContext);
+        email.setAPIAccessor(apiAccessor);
+        email.setInputParameters(parameters);
+        email.validateInputParameters();
+        
+        Session session = email.getSession();
+        
+        assertThat(session.getProperty("mail.smtp.socketFactory.class")).isEqualTo(AlwaysTrustDefaultSSLContextFactory.class.getName());
+    }
+    
+    @Test
+    void should_use_custom_tls_ssl_socket_factory_when_autotrust_is_true() throws Exception {
+        final Map<String, Object> parameters = getBasicSettings();
+        parameters.put(EmailConnector.AUTOTRUST_CERTIFICATE, true);
+        parameters.put(EmailConnector.SSL_SUPPORT, true);
+        parameters.put(EmailConnector.STARTTLS_SUPPORT, true);
+        final EmailConnector email = new EmailConnector();
+        email.setExecutionContext(engineExecutionContext);
+        email.setAPIAccessor(apiAccessor);
+        email.setInputParameters(parameters);
+        email.validateInputParameters();
+        
+        Session session = email.getSession();
+        
+        assertThat(session.getProperty("mail.smtp.socketFactory.class")).isEqualTo(AlwaysTrustTLSSSLContextFactory.class.getName());
+    }
+    
+    @Test
+    void should_use_default_ssl_socket_factory_when_autotrust_is_false() throws Exception {
+        final Map<String, Object> parameters = getBasicSettings();
+        parameters.put(EmailConnector.AUTOTRUST_CERTIFICATE, false);
+        parameters.put(EmailConnector.SSL_SUPPORT, true);
+        final EmailConnector email = new EmailConnector();
+        email.setExecutionContext(engineExecutionContext);
+        email.setAPIAccessor(apiAccessor);
+        email.setInputParameters(parameters);
+        email.validateInputParameters();
+        
+        Session session = email.getSession();
+        
+        assertThat(session.getProperty("mail.smtp.socketFactory.class")).isEqualTo(SSLSocketFactory.class.getName());
     }
 
 }
