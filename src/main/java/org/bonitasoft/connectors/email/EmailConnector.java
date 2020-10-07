@@ -1,16 +1,19 @@
-/**
- * Copyright (C) 2009-2011 BonitaSoft S.A.
- * BonitaSoft, 31 rue Gustave Eiffel - 38000 Grenoble
+/*
+ * Copyright (C) 2009 - 2020 Bonitasoft S.A.
+ * Bonitasoft, 32 rue Gustave Eiffel - 38000 Grenoble
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2.0 of the License, or
  * (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 package org.bonitasoft.connectors.email;
 
@@ -40,7 +43,10 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
+import javax.net.ssl.SSLSocketFactory;
 
+import org.bonitasoft.connectors.email.ssl.AlwaysTrustDefaultSSLContextFactory;
+import org.bonitasoft.connectors.email.ssl.AlwaysTrustTLSSSLContextFactory;
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.bpm.document.Document;
 import org.bonitasoft.engine.bpm.document.DocumentNotFoundException;
@@ -144,6 +150,11 @@ public class EmailConnector extends AbstractConnector {
      */
     public static final String SMTP_HOST = "smtpHost";
 
+    /**
+     * Indicates whether the SMTP server certificate should be always trusted
+     */
+    public static final String AUTOTRUST_CERTIFICATE = "autoTrustCertificate";
+
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Override
@@ -209,11 +220,13 @@ public class EmailConnector extends AbstractConnector {
         logInputParameter(USER_NAME);
         logInputParameter(STARTTLS_SUPPORT);
         logInputParameter(SSL_SUPPORT);
+        logInputParameter(AUTOTRUST_CERTIFICATE);
         logInputParameter(SMTP_PORT);
         logInputParameter(SMTP_HOST);
         logInputParameter(REPLY_TO);
 
         logger.info(PASSWORD + " ******");
+        @SuppressWarnings("unchecked")
         List<Object> attachments = (List<Object>) getInputParameter(ATTACHMENTS);
 
         if (attachments == null) {
@@ -259,7 +272,7 @@ public class EmailConnector extends AbstractConnector {
      *
      * @return an unshared email session from the SMTP server's properties
      */
-    private Session getSession() {
+     Session getSession() {
         final Properties properties = new Properties();
         properties.put("mail.smtp.host", getInputParameter(SMTP_HOST));
         final String smtpPort = String.valueOf(getInputParameter(SMTP_PORT));
@@ -279,7 +292,7 @@ public class EmailConnector extends AbstractConnector {
         // Using SSL
         Boolean sslParameter = (Boolean) getInputParameter(SSL_SUPPORT, true);
         if (Boolean.TRUE.equals(sslParameter)) {
-            properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            properties.put("mail.smtp.socketFactory.class", getSSLSocketFactoryClassName((boolean)getInputParameter(AUTOTRUST_CERTIFICATE, false), startTlsParameter));
             properties.put("mail.smtp.ssl.checkserveridentity", "true");
             properties.put("mail.smtp.socketFactory.fallback", "false");
             properties.put("mail.smtp.socketFactory.port", smtpPort);
@@ -297,7 +310,16 @@ public class EmailConnector extends AbstractConnector {
         return session;
     }
 
+    private String getSSLSocketFactoryClassName(boolean autoTrustCertificate, boolean starttls) {
+        return autoTrustCertificate ? getAlwaysTrustSSLContextFactory(starttls): SSLSocketFactory.class.getName();
+    }
+
+    protected String getAlwaysTrustSSLContextFactory(boolean starttls) {
+        return starttls ? AlwaysTrustTLSSSLContextFactory.class.getName() : AlwaysTrustDefaultSSLContextFactory.class.getName();
+    }
+
     private Map<String, String> getHeaders() {
+        @SuppressWarnings("unchecked")
         final List<List<Object>> headersList = (List<List<Object>>) getInputParameter(HEADERS);
         final Map<String, String> headers = new HashMap<>();
         if (headersList != null) {
@@ -340,6 +362,7 @@ public class EmailConnector extends AbstractConnector {
         String subject = (String) getInputParameter(SUBJECT);
         String charset = (String) getInputParameter(CHARSET, "UTF-8");
         String message = (String) getInputParameter(MESSAGE, "");
+        @SuppressWarnings("unchecked")
         List<Object> attachments = (List<Object>) getInputParameter(ATTACHMENTS);
         boolean html = (Boolean) getInputParameter(HTML, true);
 
@@ -423,6 +446,7 @@ public class EmailConnector extends AbstractConnector {
 
     }
 
+    @SuppressWarnings("rawtypes")
     private void handleAttachment(boolean html, StringBuilder messageBody, ProcessAPI processAPI,
             List<MimeBodyPart> bodyParts, Object attachment)
             throws ConnectorException, DocumentNotFoundException, MessagingException, UnsupportedEncodingException {
