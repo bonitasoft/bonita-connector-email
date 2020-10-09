@@ -43,10 +43,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
-import javax.net.ssl.SSLSocketFactory;
 
-import org.bonitasoft.connectors.email.ssl.AlwaysTrustDefaultSSLContextFactory;
-import org.bonitasoft.connectors.email.ssl.AlwaysTrustTLSSSLContextFactory;
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.bpm.document.Document;
 import org.bonitasoft.engine.bpm.document.DocumentNotFoundException;
@@ -153,7 +150,7 @@ public class EmailConnector extends AbstractConnector {
     /**
      * Indicates whether the SMTP server certificate should be always trusted
      */
-    public static final String AUTOTRUST_CERTIFICATE = "autoTrustCertificate";
+    public static final String TRUST_CERTIFICATE = "trustCertificate";
 
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -220,7 +217,7 @@ public class EmailConnector extends AbstractConnector {
         logInputParameter(USER_NAME);
         logInputParameter(STARTTLS_SUPPORT);
         logInputParameter(SSL_SUPPORT);
-        logInputParameter(AUTOTRUST_CERTIFICATE);
+        logInputParameter(TRUST_CERTIFICATE);
         logInputParameter(SMTP_PORT);
         logInputParameter(SMTP_HOST);
         logInputParameter(REPLY_TO);
@@ -284,18 +281,26 @@ public class EmailConnector extends AbstractConnector {
         if (returnPath != null && !returnPath.isEmpty()) {
             properties.put("mail.smtp.from", returnPath);
         }
-        // Using STARTTLS
+       
         Boolean startTlsParameter = (Boolean) getInputParameter(STARTTLS_SUPPORT, false);
-        if (Boolean.TRUE.equals(startTlsParameter)) {
+        Boolean sslParameter = (Boolean) getInputParameter(SSL_SUPPORT, true);
+        // Using STARTTLS
+        boolean useStarttls = Boolean.TRUE.equals(startTlsParameter);
+        if (useStarttls) {
             properties.put("mail.smtp.starttls.enable", "true");
+            properties.put("mail.smtp.starttls.required", "true");
         }
         // Using SSL
-        Boolean sslParameter = (Boolean) getInputParameter(SSL_SUPPORT, true);
-        if (Boolean.TRUE.equals(sslParameter)) {
-            properties.put("mail.smtp.socketFactory.class", getSSLSocketFactoryClassName((boolean)getInputParameter(AUTOTRUST_CERTIFICATE, false), startTlsParameter));
-            properties.put("mail.smtp.ssl.checkserveridentity", "true");
-            properties.put("mail.smtp.socketFactory.fallback", "false");
-            properties.put("mail.smtp.socketFactory.port", smtpPort);
+        boolean useSSL = Boolean.TRUE.equals(sslParameter);
+        if(useSSL && Boolean.FALSE.equals(startTlsParameter)) {
+            properties.put("mail.smtp.ssl.enable", "true");
+        }
+        if(useSSL || useStarttls) {
+            if((boolean)getInputParameter(TRUST_CERTIFICATE, false)) {
+                properties.put("mail.smtp.ssl.trust", "*");
+            }else {
+                properties.put("mail.smtp.ssl.checkserveridentity", "true");
+            }
         }
         Session session;
         final String username = (String) getInputParameter(USER_NAME);
@@ -308,14 +313,6 @@ public class EmailConnector extends AbstractConnector {
             session = Session.getInstance(properties, null);
         }
         return session;
-    }
-
-    private String getSSLSocketFactoryClassName(boolean autoTrustCertificate, boolean starttls) {
-        return autoTrustCertificate ? getAlwaysTrustSSLContextFactory(starttls): SSLSocketFactory.class.getName();
-    }
-
-    protected String getAlwaysTrustSSLContextFactory(boolean starttls) {
-        return starttls ? AlwaysTrustTLSSSLContextFactory.class.getName() : AlwaysTrustDefaultSSLContextFactory.class.getName();
     }
 
     private Map<String, String> getHeaders() {

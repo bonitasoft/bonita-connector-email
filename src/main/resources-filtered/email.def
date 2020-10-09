@@ -10,7 +10,7 @@
 	<input name="smtpPort" type="java.lang.Integer" mandatory="true" defaultValue="465" />
 	<input name="sslSupport" type="java.lang.Boolean" defaultValue="true" mandatory="true" />
 	<input name="starttlsSupport" type="java.lang.Boolean" defaultValue="false" mandatory="true" />
-	<input name="autoTrustCertificate" type="java.lang.Boolean" defaultValue="false" />
+	<input name="trustCertificate" type="java.lang.Boolean" defaultValue="false" />
 	<input name="userName" type="java.lang.String" />
 	<input name="password" type="java.lang.String" />
 	<input name="from" type="java.lang.String" mandatory="true" />
@@ -32,7 +32,7 @@
 		<widget id="security" xsi:type="definition:Group">
 			<widget id="ssl" inputName="sslSupport" xsi:type="definition:Checkbox" />
 			<widget id="starttls" inputName="starttlsSupport" xsi:type="definition:Checkbox" />
-			<widget id="autoTrustCertificate" inputName="autoTrustCertificate" xsi:type="definition:Checkbox" />
+			<widget id="trustCertificate" inputName="trustCertificate" xsi:type="definition:Checkbox" />
 		</widget>
 		<widget id="authentication" optional="false" xsi:type="definition:Group">
 			<widget id="username" inputName="userName" xsi:type="definition:Text" />
