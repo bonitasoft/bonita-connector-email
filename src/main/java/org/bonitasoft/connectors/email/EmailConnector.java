@@ -114,6 +114,16 @@ public class EmailConnector extends AbstractConnector {
      * The sender's email address.
      */
     public static final String FROM = "from";
+    
+    /**
+     * The sender's alias name.
+     */
+    public static final String ALIAS = "alias";
+    
+    /**
+     * The sender's alias names character set.
+     */
+    public static final String ALIASCHARSET = "aliasCharSet";
 
     /**
      * The return-path email address.
@@ -351,6 +361,8 @@ public class EmailConnector extends AbstractConnector {
             mimeMessage.setSentDate(new Date());
         } catch (MessagingException me) {
             throw new ConnectorException(me.getMessage(), me.getCause());
+        } catch (UnsupportedEncodingException uee) {
+        	throw new ConnectorException(uee.getMessage(), uee.getCause());
         }
         return mimeMessage;
     }
@@ -383,15 +395,23 @@ public class EmailConnector extends AbstractConnector {
         }
     }
 
-    private void setMessageAddresses(MimeMessage mimeMessage) throws MessagingException {
+    private void setMessageAddresses(MimeMessage mimeMessage) throws MessagingException, UnsupportedEncodingException {
         String from = (String) getInputParameter(FROM);
         String to = (String) getInputParameter(TO);
         String cc = (String) getInputParameter(CC);
         String bcc = (String) getInputParameter(BCC);
         String replyTo = (String) getInputParameter(REPLY_TO);
+        String aliasName = (String) getInputParameter(ALIAS);
+        String aliasNameCharSet = (String) getInputParameter(ALIASCHARSET);
 
         if (from != null && !from.isEmpty()) {
-            mimeMessage.setFrom(new InternetAddress(from));
+        	if (aliasName != null && !aliasName.isEmpty()) {
+				mimeMessage.setFrom(new InternetAddress(from,aliasName));
+        	} else if (aliasName != null && !aliasName.isEmpty() && aliasNameCharSet != null && !aliasNameCharSet.isEmpty()) {
+        		mimeMessage.setFrom(new InternetAddress(from,aliasName,aliasNameCharSet));
+        	} else  {
+                mimeMessage.setFrom(new InternetAddress(from));
+        	}    	
         } else {
             mimeMessage.setFrom();
         }
