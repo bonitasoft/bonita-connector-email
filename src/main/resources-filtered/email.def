@@ -14,6 +14,8 @@
 	<input name="userName" type="java.lang.String" />
 	<input name="password" type="java.lang.String" />
 	<input name="from" type="java.lang.String" mandatory="true" />
+	<input name="alias" type="java.lang.String" mandatory="false" />
+	<input name="aliasCharSet" type="java.lang.String" mandatory="false" />
 	<input name="returnPath" type="java.lang.String" />
 	<input name="to" type="java.lang.String" mandatory="true" />
 	<input name="bcc" type="java.lang.String" />
@@ -41,6 +43,8 @@
 	</page>
 	<page id="addressee">
 		<widget id="from" inputName="from" xsi:type="definition:Text" />
+		<widget id="alias" inputName="alias" xsi:type="definition:Text" />
+		<widget id="aliasCharSet" inputName="aliasCharSet" xsi:type="definition:Text" />
 		<widget id="to" inputName="to" xsi:type="definition:Text" />
 		<widget id="other" xsi:type="definition:Group">
 			<widget id="returnPath" inputName="returnPath" xsi:type="definition:Text" />
