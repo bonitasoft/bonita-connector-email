@@ -362,7 +362,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<profiles>
 		<!-- Deployment profile (required so these plugins are only used when deploying) -->
 		<profile>
@@ -395,7 +394,6 @@
 			</build>
 		</profile>
 	</profiles>
-
 	<distributionManagement>
 		<!-- Central Repository -->
 		<snapshotRepository>
@@ -407,12 +405,10 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-
 	<scm>
 		<developerConnection>scm:git:git@github.com:bonitasoft/bonita-connector-email.git</developerConnection>
 		<connection>scm:git:git@github.com:bonitasoft/bonita-connector-email.git</connection>
 		<url>https://github.com/bonitasoft/bonita-connector-email</url>
 		<tag>HEAD</tag>
 	</scm>
-
 </project>
