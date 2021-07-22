@@ -39,10 +39,7 @@ jobs:
     name: Create Release
     needs: create-tag
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
+    permissions: write-all
 
     steps:
       - name: Checkout
