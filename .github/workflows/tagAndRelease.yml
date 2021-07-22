@@ -1,0 +1,131 @@
+name: Tag and Release
+
+on: workflow_dispatch
+
+jobs:
+  create-tag:
+    name: Create Tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Java and Maven
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 11
+          server-id: github
+
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+      - name: Build and test
+        run: ./mvnw clean spotless:check verify
+
+      - name: Check plugins
+        run: ./mvnw versions:display-plugin-updates
+
+      - name: Prepare release
+        run: ./mvnw release:prepare
+
+  create-release:
+    name: Create Release
+    needs: create-tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install Java and Maven
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 11
+          server-id: github
+
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@master"
+
+      - name: Display tag
+        id: display-tag
+        run: |
+          echo "tag: ${{ steps.previoustag.outputs.tag }}"
+
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.previoustag.outputs.tag }}
+
+      - name: Build and test archetype
+        id: build-connector
+        run: |
+          echo "build ${{ steps.previoustag.outputs.tag }}"
+          ./mvnw clean verify -D--illegal-access=warn
+
+      - name: Get version from pom
+        id: get-version
+        run: |
+          VERSION=$( ./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout )
+          FINAL_NAME=$(./mvnw help:evaluate -Dexpression=project.build.finalName -q -DforceStdout )
+          echo "::set-output name=version::$VERSION"
+          echo "::set-output name=final-name::$FINAL_NAME"
+
+      - name: Display version
+        id: display-version
+        run: |
+          echo "version: ${{ steps.get-version.outputs.version }}"
+          echo "final_name: ${{ steps.get-version.outputs.final-name }}"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.previoustag.outputs.tag }}
+          release_name: ${{ steps.get-version.outputs.final-name }}
+          body: |
+            Content:
+            ${{ steps.build-connector.outputs }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/${{ steps.get-version.outputs.final-name }}-all.zip
+          asset_name: ${{ steps.get-version.outputs.final-name }}-all.zip
+          asset_content_type: application/zip
+
+      - name: Set up Java for publishing to GitHub Packages
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Publish package
+        run: ./mvnw --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

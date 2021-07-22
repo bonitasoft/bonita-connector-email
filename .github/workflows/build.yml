@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Java and Maven
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'adopt'
+          server-id: github
+
+      - name: Build and test
+        run: ./mvnw clean spotless:check verify -D--illegal-access=warn
+
+      - name: Get version from pom
+        id: get-version
+        run: |
+          VERSION=$( ./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout )
+          FINAL_NAME=$( ./mvnw help:evaluate -Dexpression=project.build.finalName -q -DforceStdout )
+          echo "::set-output name=version::$VERSION"
+          echo "::set-output name=final-name::$FINAL_NAME"
+
+      - name: Display version
+        id: display-version
+        run: |
+          echo "version: ${{ steps.get-version.outputs.version }}"
+          echo "final_name: ${{ steps.get-version.outputs.final-name }}"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "${{ steps.get-version.outputs.final-name }}-all.zip"
+          path: "target/${{ steps.get-version.outputs.final-name }}-all.zip"
+
+      - name: Publish package
+        run: ./mvnw --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
