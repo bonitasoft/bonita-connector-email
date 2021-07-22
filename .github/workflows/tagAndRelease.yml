@@ -34,6 +34,9 @@ jobs:
 
       - name: Prepare release
         run: ./mvnw --batch-mode release:prepare
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   create-release:
     name: Create Release
