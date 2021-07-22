@@ -33,7 +33,7 @@ jobs:
         run: ./mvnw versions:display-plugin-updates
 
       - name: Prepare release
-        run: ./mvnw release:prepare
+        run: ./mvnw --batch-mode release:prepare
 
   create-release:
     name: Create Release
