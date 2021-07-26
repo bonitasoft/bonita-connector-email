@@ -1,13 +1,15 @@
-package org.bonitasoft.connectors.email.templating.test;
+package com.bonitasoft.presales.connectors.email.templating.test;
 
+import com.bonitasoft.presales.connectors.email.templating.EmailConnector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bonitasoft.connectors.email.templating.EmailConnector;
 import org.bonitasoft.engine.connector.ConnectorValidationException;
 import org.bonitasoft.engine.exception.BonitaException;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+// import org.junit.Test;
 
 public class EmailConnectorValidationTest {
 
@@ -56,18 +58,27 @@ public class EmailConnectorValidationTest {
     validateConnector(parameters);
   }
 
-  @Test(expected = ConnectorValidationException.class)
+  //  @Test( expected = ConnectorValidationException.class)
+  @Test
   public void thowsExceptionDueToInvalidEmailAddressFrom() throws ConnectorValidationException {
-    final Map<String, Object> parameters = getBasicSettings();
-    parameters.put("from", "@bonita.org");
-    validateConnector(parameters);
+    Assertions.assertThrows(
+        ConnectorValidationException.class,
+        () -> {
+          final Map<String, Object> parameters = getBasicSettings();
+          parameters.put("from", "@bonita.org");
+          validateConnector(parameters);
+        });
   }
 
-  @Test(expected = ConnectorValidationException.class)
+  @Test
   public void thowsExceptionDueToNoRecipientAddress() throws ConnectorValidationException {
-    final Map<String, Object> parameters = getBasicSettings();
-    parameters.remove("to");
-    validateConnector(parameters);
+    Assertions.assertThrows(
+        ConnectorValidationException.class,
+        () -> {
+          final Map<String, Object> parameters = getBasicSettings();
+          parameters.remove("to");
+          validateConnector(parameters);
+        });
   }
 
   @Test
@@ -132,46 +143,70 @@ public class EmailConnectorValidationTest {
     validateConnector(parameters);
   }
 
-  @Test(expected = ConnectorValidationException.class)
+  @Test
   public void throwsExceptionWhenSmtpHostIsNull() throws ConnectorValidationException {
-    final Map<String, Object> parameters = getBasicSettings();
-    parameters.put("smtpHost", null);
-    validateConnector(parameters);
+    Assertions.assertThrows(
+        ConnectorValidationException.class,
+        () -> {
+          final Map<String, Object> parameters = getBasicSettings();
+          parameters.put("smtpHost", null);
+          validateConnector(parameters);
+        });
   }
 
-  @Test(expected = ConnectorValidationException.class)
+  @Test
   public void throwsExceptionWhenSmtpPortIsNull() throws ConnectorValidationException {
-    final Map<String, Object> parameters = getBasicSettings();
-    parameters.put("smtpPort", null);
-    validateConnector(parameters);
+    Assertions.assertThrows(
+        ConnectorValidationException.class,
+        () -> {
+          final Map<String, Object> parameters = getBasicSettings();
+          parameters.put("smtpPort", null);
+          validateConnector(parameters);
+        });
   }
 
-  @Test(expected = ConnectorValidationException.class)
+  @Test
   public void throwsExceptionWhenWrappedSmtpPortIsLessThanRange() throws BonitaException {
-    final Map<String, Object> parameters = getBasicSettings();
-    parameters.put("smtpPort", -1);
-    validateConnector(parameters);
+    Assertions.assertThrows(
+        ConnectorValidationException.class,
+        () -> {
+          final Map<String, Object> parameters = getBasicSettings();
+          parameters.put("smtpPort", -1);
+          validateConnector(parameters);
+        });
   }
 
-  @Test(expected = ConnectorValidationException.class)
+  @Test
   public void throwsExceptionWhenWrappedSmtpPortWithGreaterThanRange() throws BonitaException {
-    final Map<String, Object> parameters = getBasicSettings();
-    parameters.put("smtpPort", 65536);
-    validateConnector(parameters);
+    Assertions.assertThrows(
+        ConnectorValidationException.class,
+        () -> {
+          final Map<String, Object> parameters = getBasicSettings();
+          parameters.put("smtpPort", 65536);
+          validateConnector(parameters);
+        });
   }
 
-  @Test(expected = ConnectorValidationException.class)
+  @Test
   public void throwsExceptionWhenSmtpPortIsLessThanRange() throws BonitaException {
-    final Map<String, Object> parameters = getBasicSettings();
-    parameters.put("smtpPort", -1);
-    validateConnector(parameters);
+    Assertions.assertThrows(
+        ConnectorValidationException.class,
+        () -> {
+          final Map<String, Object> parameters = getBasicSettings();
+          parameters.put("smtpPort", -1);
+          validateConnector(parameters);
+        });
   }
 
-  @Test(expected = ConnectorValidationException.class)
+  @Test
   public void throwsExceptionWhenSmtpPortWithGreaterThanRange() throws BonitaException {
-    final Map<String, Object> parameters = getBasicSettings();
-    parameters.put("smtpPort", 65536);
-    validateConnector(parameters);
+    Assertions.assertThrows(
+        ConnectorValidationException.class,
+        () -> {
+          final Map<String, Object> parameters = getBasicSettings();
+          parameters.put("smtpPort", 65536);
+          validateConnector(parameters);
+        });
   }
 
   @Test

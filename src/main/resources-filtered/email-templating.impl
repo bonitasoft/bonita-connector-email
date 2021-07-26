@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<implementation:connectorImplementation xmlns:implementation="http://www.bonitasoft.org/ns/connector/implementation/6.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <definitionId>${connector-definition-id}</definitionId> <!-- Id of the definition implemented -->
+	<description>Implementation based on javax.mail 1.4.7</description>
+    <definitionVersion>${connector-definition-version}</definitionVersion> <!-- Version of the definition implemented -->
+
+    <implementationId>${connector-impl-id}</implementationId> <!-- Id of the implementation -->
+    <implementationVersion>${connector-impl-version}</implementationVersion> <!-- Version of the implementation -->
+    <implementationClassname>${connector-main-class}</implementationClassname> <!-- Path to the main implementation class -->
+
+<!-- retrieved from the pom.xml at build time -->
+${connector-dependencies}
+
+</implementation:connectorImplementation>

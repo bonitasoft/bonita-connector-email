@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition:ConnectorDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.1">
-  <id>email-templating</id>
-  <version>1.1.0</version>
+  <id>${connector-definition-id}</id>
+  <version>${connector-definition-version}</version>
   <icon>email.png</icon>
   <category icon="messaging.png" id="messaging"/>
   <input defaultValue="smtp.gmail.com" mandatory="true" name="smtpHost" type="java.lang.String"/>

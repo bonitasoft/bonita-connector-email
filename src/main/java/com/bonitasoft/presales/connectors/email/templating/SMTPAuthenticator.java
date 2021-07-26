@@ -1,4 +1,4 @@
-package org.bonitasoft.connectors.email.templating;
+package com.bonitasoft.presales.connectors.email.templating;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;

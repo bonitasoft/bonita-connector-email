@@ -1,40 +1,75 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>bonita-connectors</artifactId>
-        <groupId>org.bonitasoft.connectors</groupId>
-        <version>1.0.0</version>
-    </parent>
+    <!--    <parent>-->
+    <!--        <artifactId>bonita-connectors</artifactId>-->
+    <!--        <groupId>org.bonitasoft.connectors</groupId>-->
+    <!--        <version>1.0.0</version>-->
+    <!--    </parent>-->
 
     <groupId>com.bonitasoft.presales.connectors</groupId>
     <artifactId>bonita-connector-email-templating</artifactId>
     <version>2.5-SNAPSHOT</version>
+    <name>bonita-connector-email-templating</name>
+    <packaging>jar</packaging>
 
     <properties>
+        <!-- Maven -->
+        <java.version>11</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.build.timestamp.format>yyyy.MM.dd-hh.mm</maven.build.timestamp.format>
+
+        <!-- Connector -->
+        <connector-definition-id>email-templating</connector-definition-id>
+        <connector-definition-version>1.1.0</connector-definition-version>
+        <connector-impl-id>${connector-definition-id}-impl</connector-impl-id>
+        <connector-impl-version>${project.version}</connector-impl-version>
+        <connector-main-class>${project.groupId}.email.templating.EmailConnector</connector-main-class>
+
+        <!-- Tests -->
+        <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
+        <assertj-core.version>3.20.2</assertj-core.version>
+        <mockito-core.version>3.11.2</mockito-core.version>
+        <logback-classic.version>1.2.3</logback-classic.version>
+
+        <!-- Maven plugins -->
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+        <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+
+
         <bonita.engine.version>7.12.1</bonita.engine.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <assertj.version>1.7.25</assertj.version>
+
+        <!-- Github-->
         <github.owner>laurentleseigneur</github.owner>
 
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.bonitasoft.engine</groupId>
-                <artifactId>bonita-engine</artifactId>
-                <version>${bonita.engine.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>org.bonitasoft.engine</groupId>-->
+            <!--                <artifactId>bonita-engine</artifactId>-->
+            <!--                <version>${bonita.engine.version}</version>-->
+            <!--                <type>pom</type>-->
+            <!--                <scope>import</scope>-->
+            <!--            </dependency>-->
             <dependency>
                 <artifactId>bonita-common</artifactId>
                 <groupId>org.bonitasoft.engine</groupId>
                 <version>${bonita.engine.version}</version>
+                <scope>provided</scope>
             </dependency>
+
             <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
@@ -83,7 +118,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.23.4</version>
+                <version>2.24.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -95,6 +130,7 @@
             <groupId>org.bonitasoft.engine</groupId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -107,16 +143,62 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-tools</artifactId>
         </dependency>
+
+        <!-- Tests -->
         <dependency>
-            <artifactId>junit</artifactId>
-            <groupId>junit</groupId>
+            <groupId>org.bonitasoft.engine</groupId>
+            <artifactId>bonita-engine</artifactId>
+            <version>${bonita.engine.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+
+            <!--            <dependency>-->
+            <!--                <groupId>org.bonitasoft.engine</groupId>-->
+            <!--                <artifactId>bonita-engine</artifactId>-->
+            <!--                <version>${bonita.engine.version}</version>-->
+            <!--                <type>pom</type>-->
+            <!--                <scope>import</scope>-->
+            <!--            </dependency>-->
+
+
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter-engine.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <version>${assertj-core.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!--        <dependency>-->
+        <!--            <artifactId>junit</artifactId>-->
+        <!--            <groupId>junit</groupId>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.assertj</groupId>-->
+        <!--            <artifactId>assertj-core</artifactId>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -127,11 +209,11 @@
             <artifactId>subethasmtp</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.slf4j</groupId>-->
+        <!--            <artifactId>slf4j-simple</artifactId>-->
+        <!--            <scope>test</scope>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -140,6 +222,17 @@
     </dependencies>
 
     <build>
+        <defaultGoal>package</defaultGoal>
+        <resources>
+            <resource>
+                <directory>src/main/resources-filtered</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -161,69 +254,119 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <!--                    <artifactId>maven-assembly-plugin</artifactId>-->
+                    <!--                    <version>2.5</version>-->
+                    <!--                    <executions>-->
+                    <!--                        <execution>-->
+                    <!--                            <id>assemble</id>-->
+                    <!--                            <phase>none</phase>-->
+                    <!--                        </execution>-->
+                    <!--                    </executions>-->
+
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>${maven-assembly-plugin.version}</version>
                     <executions>
                         <execution>
-                            <id>assemble</id>
-                            <phase>none</phase>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorSourceDirectory>${project.basedir}/src/assembly</descriptorSourceDirectory>
+                                <appendAssemblyId>true</appendAssemblyId>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                        <testSource>1.8</testSource>
-                        <testTarget>1.8</testTarget>
-                    </configuration>
+                    <version>${maven-compiler-plugin.version}</version>
+<!--                    <configuration>&ndash;&gt;-->
+<!--                        <source>${java.version}</source>-->
+<!--                        <target>${java.version}</target>-->
+<!--                        <testSource>${java.version}</testSource>-->
+<!--                        <testTarget>${java.version}</testTarget>-->
+<!--                    </configuration>-->
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <!--                <plugin>-->
+                <!--                    <groupId>org.apache.maven.plugins</groupId>-->
+                <!--                    <artifactId>maven-compiler-plugin</artifactId>-->
+                <!--                    <version>3.8.0</version>-->
+                <!--                    <configuration>-->
+                <!--                        <source>${java.version}</source>-->
+                <!--                        <target>${java.version}</target>-->
+                <!--                        <testSource>${java.version}</testSource>-->
+                <!--                        <testTarget>${java.version}</testTarget>-->
+                <!--                    </configuration>-->
+                <!--                </plugin>-->
             </plugins>
         </pluginManagement>
 
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>all</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>execute</goal>
                         </goals>
                         <configuration>
-                            <descriptor>${basedir}/connector-assembly.xml</descriptor>
-                            <appendAssemblyId>true</appendAssemblyId>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>email-templating</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptor>${basedir}/email-templating-assembly.xml</descriptor>
+                            <source>${project.basedir}/src/script/dependencies-as-var.groovy</source>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-release-plugin</artifactId>-->
+            <!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <artifactId>maven-assembly-plugin</artifactId>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>all</id>-->
+            <!--                        <phase>package</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>single</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <descriptor>${basedir}/connector-assembly.xml</descriptor>-->
+            <!--                            <appendAssemblyId>true</appendAssemblyId>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>email-templating</id>-->
+            <!--                        <phase>package</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>single</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <descriptor>${basedir}/email-templating-assembly.xml</descriptor>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
                 <version>2.12.1</version>
                 <configuration>
                     <java>
-                        <importOrder />
-                        <removeUnusedImports />
-                        <googleJavaFormat />
+                        <importOrder/>
+                        <removeUnusedImports/>
+                        <googleJavaFormat/>
                     </java>
                 </configuration>
             </plugin>
