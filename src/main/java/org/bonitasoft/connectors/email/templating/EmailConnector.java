@@ -40,13 +40,6 @@ import org.bonitasoft.engine.connector.AbstractConnector;
 import org.bonitasoft.engine.connector.ConnectorException;
 import org.bonitasoft.engine.connector.ConnectorValidationException;
 
-/**
- * This connector provides an email sending service.
- *
- * @author Matthieu Chaffotte
- * @author Yanyan Liu
- * @author Baptiste Mesta
- */
 public class EmailConnector extends AbstractConnector {
 
   /** The files to attach to the email. */
