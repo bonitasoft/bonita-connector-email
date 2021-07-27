@@ -2,12 +2,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!--    <parent>-->
-    <!--        <artifactId>bonita-connectors</artifactId>-->
-    <!--        <groupId>org.bonitasoft.connectors</groupId>-->
-    <!--        <version>1.0.0</version>-->
-    <!--    </parent>-->
-
     <groupId>com.bonitasoft.presales.connectors</groupId>
     <artifactId>bonita-connector-email-templating</artifactId>
     <version>2.5-SNAPSHOT</version>
@@ -15,11 +9,15 @@
     <packaging>jar</packaging>
 
     <properties>
+        <bonita.engine.version>7.12.1</bonita.engine.version>
+
         <!-- Maven -->
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy.MM.dd-hh.mm</maven.build.timestamp.format>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Connector -->
         <connector-definition-id>email-templating</connector-definition-id>
@@ -28,109 +26,96 @@
         <connector-impl-version>${project.version}</connector-impl-version>
         <connector-main-class>${project.groupId}.email.templating.EmailConnector</connector-main-class>
 
-        <!-- Tests -->
+        <!-- Versions -->
+        <javax-mail.version>1.4.7</javax-mail.version>
+        <javax-activation.version>1.1</javax-activation.version>
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
+        <junit.version>4.11</junit.version>
         <assertj-core.version>3.20.2</assertj-core.version>
+        <assertj.version>1.7.25</assertj.version>
         <mockito-core.version>3.11.2</mockito-core.version>
         <logback-classic.version>1.2.3</logback-classic.version>
+        <slfj.version>1.7.30</slfj.version>
+        <velocity.version>1.7</velocity.version>
+        <velocity-tool.version>2.0</velocity-tool.version>
+        <commons-io.version>2.8.0</commons-io.version>
+        <subethamail.version>3.1.5</subethamail.version>
 
         <!-- Maven plugins -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 
-
-        <bonita.engine.version>7.12.1</bonita.engine.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <assertj.version>1.7.25</assertj.version>
-
         <!-- Github-->
         <github.owner>laurentleseigneur</github.owner>
-
     </properties>
-
     <dependencyManagement>
         <dependencies>
-            <!--            <dependency>-->
-            <!--                <groupId>org.bonitasoft.engine</groupId>-->
-            <!--                <artifactId>bonita-engine</artifactId>-->
-            <!--                <version>${bonita.engine.version}</version>-->
-            <!--                <type>pom</type>-->
-            <!--                <scope>import</scope>-->
-            <!--            </dependency>-->
             <dependency>
                 <artifactId>bonita-common</artifactId>
                 <groupId>org.bonitasoft.engine</groupId>
                 <version>${bonita.engine.version}</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
-                <version>1.1</version>
+                <version>${javax-activation.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
-                <version>1.4.7</version>
+                <version>${javax-mail.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity</artifactId>
-                <version>1.7</version>
+                <version>${velocity.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity-tools</artifactId>
-                <version>2.0</version>
+                <version>${velocity-tool.version}</version>
             </dependency>
             <dependency>
                 <artifactId>junit</artifactId>
                 <groupId>junit</groupId>
-                <version>4.11</version>
+                <version>${junit.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.17.2</version>
+                <version>${assertj-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.8.0</version>
+                <version>${commons-io.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.subethamail</groupId>
                 <artifactId>subethasmtp</artifactId>
-                <version>3.1.5</version>
+                <version>${subethamail.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
-                <version>1.7.30</version>
+                <version>${slfj.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.24.0</version>
+                <version>${mockito-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-
     <dependencies>
         <dependency>
             <artifactId>bonita-common</artifactId>
             <groupId>org.bonitasoft.engine</groupId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -151,18 +136,7 @@
             <version>${bonita.engine.version}</version>
             <type>pom</type>
             <scope>import</scope>
-
-            <!--            <dependency>-->
-            <!--                <groupId>org.bonitasoft.engine</groupId>-->
-            <!--                <artifactId>bonita-engine</artifactId>-->
-            <!--                <version>${bonita.engine.version}</version>-->
-            <!--                <type>pom</type>-->
-            <!--                <scope>import</scope>-->
-            <!--            </dependency>-->
-
-
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -187,18 +161,6 @@
             <version>${logback-classic.version}</version>
             <scope>test</scope>
         </dependency>
-
-
-        <!--        <dependency>-->
-        <!--            <artifactId>junit</artifactId>-->
-        <!--            <groupId>junit</groupId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.assertj</groupId>-->
-        <!--            <artifactId>assertj-core</artifactId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -209,18 +171,12 @@
             <artifactId>subethasmtp</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.slf4j</groupId>-->
-        <!--            <artifactId>slf4j-simple</artifactId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <defaultGoal>package</defaultGoal>
         <resources>
@@ -254,15 +210,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <!--                    <artifactId>maven-assembly-plugin</artifactId>-->
-                    <!--                    <version>2.5</version>-->
-                    <!--                    <executions>-->
-                    <!--                        <execution>-->
-                    <!--                            <id>assemble</id>-->
-                    <!--                            <phase>none</phase>-->
-                    <!--                        </execution>-->
-                    <!--                    </executions>-->
-
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
                     <executions>
@@ -282,32 +229,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
-<!--                    <configuration>&ndash;&gt;-->
-<!--                        <source>${java.version}</source>-->
-<!--                        <target>${java.version}</target>-->
-<!--                        <testSource>${java.version}</testSource>-->
-<!--                        <testTarget>${java.version}</testTarget>-->
-<!--                    </configuration>-->
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                 </plugin>
-                <!--                <plugin>-->
-                <!--                    <groupId>org.apache.maven.plugins</groupId>-->
-                <!--                    <artifactId>maven-compiler-plugin</artifactId>-->
-                <!--                    <version>3.8.0</version>-->
-                <!--                    <configuration>-->
-                <!--                        <source>${java.version}</source>-->
-                <!--                        <target>${java.version}</target>-->
-                <!--                        <testSource>${java.version}</testSource>-->
-                <!--                        <testTarget>${java.version}</testTarget>-->
-                <!--                    </configuration>-->
-                <!--                </plugin>-->
             </plugins>
         </pluginManagement>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
@@ -328,36 +257,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-release-plugin</artifactId>-->
-            <!--            </plugin>-->
-            <!--            <plugin>-->
-            <!--                <artifactId>maven-assembly-plugin</artifactId>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>all</id>-->
-            <!--                        <phase>package</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>single</goal>-->
-            <!--                        </goals>-->
-            <!--                        <configuration>-->
-            <!--                            <descriptor>${basedir}/connector-assembly.xml</descriptor>-->
-            <!--                            <appendAssemblyId>true</appendAssemblyId>-->
-            <!--                        </configuration>-->
-            <!--                    </execution>-->
-            <!--                    <execution>-->
-            <!--                        <id>email-templating</id>-->
-            <!--                        <phase>package</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>single</goal>-->
-            <!--                        </goals>-->
-            <!--                        <configuration>-->
-            <!--                            <descriptor>${basedir}/email-templating-assembly.xml</descriptor>-->
-            <!--                        </configuration>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
@@ -379,7 +278,6 @@
             </plugin>
         </plugins>
     </build>
-
     <scm>
         <url>https://github.com/${github.owner}/${project.artifactId}</url>
         <developerConnection>scm:git:${project.scm.url}.git</developerConnection>
