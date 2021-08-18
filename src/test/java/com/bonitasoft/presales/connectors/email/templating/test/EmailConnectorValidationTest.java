@@ -6,10 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bonitasoft.engine.connector.ConnectorValidationException;
-import org.bonitasoft.engine.exception.BonitaException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-// import org.junit.Test;
 
 public class EmailConnectorValidationTest {
 
@@ -29,7 +27,7 @@ public class EmailConnectorValidationTest {
   }
 
   private Map<String, Object> getBasicSettings() {
-    final Map<String, Object> parameters = new HashMap<String, Object>();
+    final Map<String, Object> parameters = new HashMap<>();
     parameters.put("smtpHost", SMTP_HOST);
     parameters.put("smtpPort", 0);
     parameters.put("to", ADDRESSJOHN);
@@ -58,9 +56,8 @@ public class EmailConnectorValidationTest {
     validateConnector(parameters);
   }
 
-  //  @Test( expected = ConnectorValidationException.class)
   @Test
-  public void thowsExceptionDueToInvalidEmailAddressFrom() throws ConnectorValidationException {
+  public void thowsExceptionDueToInvalidEmailAddressFrom() {
     Assertions.assertThrows(
         ConnectorValidationException.class,
         () -> {
@@ -71,7 +68,7 @@ public class EmailConnectorValidationTest {
   }
 
   @Test
-  public void thowsExceptionDueToNoRecipientAddress() throws ConnectorValidationException {
+  public void thowsExceptionDueToNoRecipientAddress() {
     Assertions.assertThrows(
         ConnectorValidationException.class,
         () -> {
@@ -90,15 +87,15 @@ public class EmailConnectorValidationTest {
 
   @Test
   public void validEmailWithExtraHeaders() throws ConnectorValidationException {
-    List<List<String>> headers = new ArrayList<List<String>>();
-    List<String> line = new ArrayList<String>();
+    List<List<String>> headers = new ArrayList<>();
+    List<String> line = new ArrayList<>();
     line.add("X-Mailer");
     line.add("Bonita");
     headers.add(line);
-    line = new ArrayList<String>();
+    line = new ArrayList<>();
     line.add("X-Sender");
     line.add("Test");
-    line = new ArrayList<String>();
+    line = new ArrayList<>();
     line.add("WhatIwant");
     line.add("WhatIwant");
     final Map<String, Object> parameters = getBasicSettings();
@@ -144,7 +141,7 @@ public class EmailConnectorValidationTest {
   }
 
   @Test
-  public void throwsExceptionWhenSmtpHostIsNull() throws ConnectorValidationException {
+  public void throwsExceptionWhenSmtpHostIsNull() {
     Assertions.assertThrows(
         ConnectorValidationException.class,
         () -> {
@@ -155,7 +152,7 @@ public class EmailConnectorValidationTest {
   }
 
   @Test
-  public void throwsExceptionWhenSmtpPortIsNull() throws ConnectorValidationException {
+  public void throwsExceptionWhenSmtpPortIsNull() {
     Assertions.assertThrows(
         ConnectorValidationException.class,
         () -> {
@@ -166,7 +163,7 @@ public class EmailConnectorValidationTest {
   }
 
   @Test
-  public void throwsExceptionWhenWrappedSmtpPortIsLessThanRange() throws BonitaException {
+  public void throwsExceptionWhenWrappedSmtpPortIsLessThanRange() {
     Assertions.assertThrows(
         ConnectorValidationException.class,
         () -> {
@@ -177,7 +174,7 @@ public class EmailConnectorValidationTest {
   }
 
   @Test
-  public void throwsExceptionWhenWrappedSmtpPortWithGreaterThanRange() throws BonitaException {
+  public void throwsExceptionWhenWrappedSmtpPortWithGreaterThanRange() {
     Assertions.assertThrows(
         ConnectorValidationException.class,
         () -> {
@@ -188,7 +185,7 @@ public class EmailConnectorValidationTest {
   }
 
   @Test
-  public void throwsExceptionWhenSmtpPortIsLessThanRange() throws BonitaException {
+  public void throwsExceptionWhenSmtpPortIsLessThanRange() {
     Assertions.assertThrows(
         ConnectorValidationException.class,
         () -> {
@@ -199,7 +196,7 @@ public class EmailConnectorValidationTest {
   }
 
   @Test
-  public void throwsExceptionWhenSmtpPortWithGreaterThanRange() throws BonitaException {
+  public void throwsExceptionWhenSmtpPortWithGreaterThanRange() {
     Assertions.assertThrows(
         ConnectorValidationException.class,
         () -> {
@@ -210,14 +207,14 @@ public class EmailConnectorValidationTest {
   }
 
   @Test
-  public void validEmailWithANullSubject() throws BonitaException {
+  public void validEmailWithANullSubject() throws ConnectorValidationException {
     final Map<String, Object> parameters = getBasicSettings();
     parameters.put("subject", null);
     validateConnector(parameters);
   }
 
   @Test
-  public void validEmailWithASubject() throws BonitaException {
+  public void validEmailWithASubject() throws ConnectorValidationException {
     final Map<String, Object> parameters = getBasicSettings();
     parameters.put("subject", SUBJECT);
     validateConnector(parameters);

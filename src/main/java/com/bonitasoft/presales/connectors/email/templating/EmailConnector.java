@@ -98,13 +98,15 @@ public class EmailConnector extends AbstractConnector {
   /** The name or the IP address of the SMTP server. */
   public static final String SMTP_HOST = "smtpHost";
 
+  public static final String TLSV_1_2 = "TLSv1.2";
+
   private Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
   @Override
   public void validateInputParameters() throws ConnectorValidationException {
     // FIXME: handle replyTo parameter (not implemented yet):
     logInputParameters();
-    List<String> errors = new ArrayList<String>(1);
+    List<String> errors = new ArrayList<>(1);
     final Integer smtpPort = (Integer) getInputParameter(SMTP_PORT);
 
     if (smtpPort == null) {
@@ -178,7 +180,7 @@ public class EmailConnector extends AbstractConnector {
     }
 
     Map<String, String> headers = getHeaders();
-    if (headers == null || headers.isEmpty()) {
+    if (headers.isEmpty()) {
       LOGGER.info("Headers null");
     } else {
       for (Entry<String, String> header : headers.entrySet()) {
@@ -205,7 +207,7 @@ public class EmailConnector extends AbstractConnector {
   }
 
   private void logInputParameter(String parameterName) {
-    LOGGER.fine(parameterName + " " + String.valueOf(getInputParameter(parameterName)));
+    LOGGER.fine(parameterName + " " + getInputParameter(parameterName));
   }
 
   private void checkInputParameter(String parameter, List<String> errors) {
@@ -251,6 +253,7 @@ public class EmailConnector extends AbstractConnector {
       properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
       properties.put("mail.smtp.socketFactory.fallback", "false");
       properties.put("mail.smtp.socketFactory.port", smtpPort);
+      properties.put("mail.smtp.ssl.protocols", TLSV_1_2);
     }
     Session session;
     final String username = (String) getInputParameter(USER_NAME);
@@ -267,7 +270,7 @@ public class EmailConnector extends AbstractConnector {
 
   private Map<String, String> getHeaders() {
     final List<List<Object>> headersList = (List<List<Object>>) getInputParameter(HEADERS);
-    final Map<String, String> headers = new HashMap<String, String>();
+    final Map<String, String> headers = new HashMap<>();
     if (headersList != null) {
       for (List<Object> rows : headersList) {
         if (rows.size() == 2) {
@@ -407,7 +410,7 @@ public class EmailConnector extends AbstractConnector {
       StringBuilder messageBody = new StringBuilder(message);
       ProcessAPI processAPI = getAPIAccessor().getProcessAPI();
       final Multipart body = new MimeMultipart("mixed");
-      List<MimeBodyPart> bodyParts = new ArrayList<MimeBodyPart>();
+      List<MimeBodyPart> bodyParts = new ArrayList<>();
       if (attachments != null) {
         for (Object attachment : attachments) {
           handleAttachment(html, messageBody, processAPI, bodyParts, attachment);

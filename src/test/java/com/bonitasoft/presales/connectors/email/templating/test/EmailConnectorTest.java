@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
@@ -148,13 +149,13 @@ public class EmailConnectorTest {
   public void sendASimpleEmail() throws BonitaException, MessagingException, InterruptedException {
     executeConnector(getBasicSettings());
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME // FIXME assertNotNull(message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isNotNull();
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertEquals(0, mime.getSize());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getSize()).isEqualTo(0);
   }
 
   @Test
@@ -163,13 +164,13 @@ public class EmailConnectorTest {
     parameters.put("from", ADDRESSMARK);
     executeConnector(parameters);
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertEquals(0, mime.getSize());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getSize()).isEqualTo(0);
   }
 
   @Test
@@ -179,13 +180,13 @@ public class EmailConnectorTest {
     parameters.put("password", "doe");
     executeConnector(parameters);
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertNotNull(message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isNotNull();
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertEquals(0, mime.getSize());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getSize()).isEqualTo(0);
   }
 
   @Test
@@ -207,20 +208,20 @@ public class EmailConnectorTest {
     parameters.put("from", ADDRESSMARK);
     executeConnector(parameters);
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(2, messages.size());
+    assertThat(messages).hasSize(2);
     WiserMessage message = messages.get(0);
-    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertEquals(0, mime.getSize());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getSize()).isEqualTo(0);
 
     message = messages.get(1);
-    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSPATTY, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSPATTY);
     mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertEquals(0, mime.getSize());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getSize()).isEqualTo(0);
   }
 
   @Test
@@ -231,46 +232,32 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     List<WiserMessage> messages = server.getMessages();
-    //    // FIXME assertEquals(2, messages.size());
-    assertThat(messages.size()).isEqualTo(2);
+    assertThat(messages).hasSize(2);
     WiserMessage message = messages.get(0);
     assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
     assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
-    //    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    //    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
     MimeMessage mime = message.getMimeMessage();
-    //    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
     assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
-    //    // FIXME assertEquals(0, mime.getSize());
     assertThat(mime.getSize()).isEqualTo(0);
 
     message = messages.get(1);
     assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
     assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSPATTY);
-    //    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    //    // FIXME assertEquals(ADDRESSPATTY, message.getEnvelopeReceiver());
     mime = message.getMimeMessage();
-    //    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
     assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
     assertThat(mime.getSize()).isEqualTo(0);
-    //    // FIXME assertEquals(0, mime.getSize());
 
     parameters.put("cc", ADDRESSPATTY + ", " + ADDRESSMARK);
     executeConnector(parameters);
     messages = server.getMessages();
 
-    assertThat(messages.size()).isEqualTo(5);
-    //    // FIXME assertEquals(5, messages.size());
+    assertThat(messages).hasSize(5);
     message = messages.get(4);
     assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
     assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSMARK);
-    //    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    //    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeReceiver());
     mime = message.getMimeMessage();
     assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
     assertThat(mime.getSize()).isEqualTo(0);
-    //    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    //    // FIXME assertEquals(0, mime.getSize());
   }
 
   @Test
@@ -281,11 +268,11 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     WiserMessage message = messages.get(0);
-    // FIXME assertEquals(ADDRESSPATTY, message.getEnvelopeSender());
-    // FIXME assertEquals(new InternetAddress(ADDRESSMARK), message.getMimeMessage().getFrom()[0]);
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSPATTY);
+    assertThat(message.getMimeMessage().getFrom()[0]).isEqualTo(new InternetAddress(ADDRESSMARK));
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
   }
 
   @Test
@@ -296,14 +283,14 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertTrue(mime.getContentType().contains(TEXT_PLAIN));
-    // FIXME assertEquals(PLAIN_MESSAGE, mime.getContent());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getContentType()).contains(TEXT_PLAIN);
+    assertThat(mime.getContent()).isEqualTo(PLAIN_MESSAGE);
   }
 
   @Test
@@ -322,14 +309,14 @@ public class EmailConnectorTest {
 
     // then
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertTrue(mime.getContentType().contains(TEXT_PLAIN));
-    // FIXME assertEquals("Dear Walter Bates", mime.getContent());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getContentType()).contains(TEXT_PLAIN);
+    assertThat(mime.getContent()).isEqualTo("Dear Walter Bates");
   }
 
   @Test
@@ -348,14 +335,14 @@ public class EmailConnectorTest {
 
     // then
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertTrue(mime.getContentType().contains(TEXT_PLAIN));
-    // FIXME assertEquals("Dear ", mime.getContent());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getContentType()).contains(TEXT_PLAIN);
+    assertThat(mime.getContent()).isEqualTo("Dear ");
   }
 
   @Test
@@ -374,14 +361,14 @@ public class EmailConnectorTest {
 
     // then
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertTrue(mime.getContentType().contains(TEXT_HTML));
-    // FIXME assertEquals("<p>Dear Walter Bates</p>", mime.getContent());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getContentType()).contains(TEXT_HTML);
+    assertThat(mime.getContent()).isEqualTo("<p>Dear Walter Bates</p>");
   }
 
   @Test
@@ -393,14 +380,14 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertEquals(ADDRESSMARK, message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo(ADDRESSMARK);
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertTrue(mime.getContentType().contains(TEXT_HTML));
-    // FIXME assertEquals(HTML_MESSAGE, mime.getContent());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getContentType()).contains(TEXT_HTML);
+    assertThat(mime.getContent()).isEqualTo(HTML_MESSAGE);
   }
 
   @Test
@@ -448,19 +435,19 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertEquals("alice@bob.charly", message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isEqualTo("alice@bob.charly");
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertEquals(0, mime.getSize());
-    // FIXME assertEquals("Bonita Mailer", mime.getHeader("X-Mailer", ""));
-    // FIXME assertEquals("2 (High)", mime.getHeader("X-Priority", ""));
-    // FIXME assertEquals("anyValue", mime.getHeader("WhatIWant", ""));
-    // FIXME assertNotSame("alice@bob.charly", mime.getHeader("From"));
-    // FIXME assertFalse(mime.getContentType().contains("video/mpeg"));
-    // FIXME assertNotSame("IWantToHackTheServer", mime.getHeader("Message-ID"));
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getSize()).isEqualTo(0);
+    assertThat(mime.getHeader("X-Mailer", "")).isEqualTo("Bonita Mailer");
+    assertThat(mime.getHeader("X-Priority", "")).isEqualTo("2 (High)");
+    assertThat(mime.getHeader("WhatIWant", "")).isEqualTo("anyValue");
+    assertThat(mime.getHeader("From")).contains("alice@bob.charly");
+    assertThat(mime.getHeader("Message-ID")).doesNotContain("IWantToHackTheServer");
+    assertThat(mime.getContentType()).doesNotContain("video/mpeg");
   }
 
   @Test
@@ -471,14 +458,14 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertNotNull(message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isNotNull();
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(CYRILLIC_SUBJECT, mime.getSubject());
-    // FIXME assertTrue(mime.getContentType().contains(TEXT_PLAIN));
-    // FIXME assertEquals(CYRILLIC_MESSAGE, mime.getContent());
+    assertThat(mime.getSubject()).isEqualTo(CYRILLIC_SUBJECT);
+    assertThat(mime.getContentType()).contains(TEXT_PLAIN);
+    assertThat(mime.getContent()).isEqualTo(CYRILLIC_MESSAGE);
   }
 
   @Test
@@ -489,14 +476,14 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     final List<WiserMessage> messages = server.getMessages();
-    // FIXME assertEquals(1, messages.size());
+    assertThat(messages).hasSize(1);
     final WiserMessage message = messages.get(0);
-    // FIXME assertNotNull(message.getEnvelopeSender());
-    // FIXME assertEquals(ADDRESSJOHN, message.getEnvelopeReceiver());
+    assertThat(message.getEnvelopeSender()).isNotNull();
+    assertThat(message.getEnvelopeReceiver()).isEqualTo(ADDRESSJOHN);
     final MimeMessage mime = message.getMimeMessage();
-    // FIXME assertEquals(MAIL_SUBJECT, mime.getSubject());
-    // FIXME assertTrue(mime.getContentType().contains(TEXT_PLAIN));
-    // FIXME assertEquals("? ? ?", mime.getContent());
+    assertThat(mime.getSubject()).isEqualTo(MAIL_SUBJECT);
+    assertThat(mime.getContentType()).contains(TEXT_PLAIN);
+    assertThat(mime.getContent()).isEqualTo("? ? ?");
   }
 
   @Test
@@ -521,7 +508,7 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     List<WiserMessage> messages = server.getMessages();
-    // FIXME assumeNotNull(messages);
+    assertThat(messages).isNotNull();
     assertThat(
             ((MimeMultipart) messages.get(0).getMimeMessage().getContent())
                 .getBodyPart(1)
@@ -554,7 +541,7 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     List<WiserMessage> messages = server.getMessages();
-    // FIXME assumeNotNull(messages);
+    assertThat(messages).isNotNull();
     assertThat(
             ((MimeMultipart) messages.get(0).getMimeMessage().getContent())
                 .getBodyPart(1)
@@ -573,7 +560,7 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     List<WiserMessage> messages = server.getMessages();
-    // FIXME assumeNotNull(messages);
+    assertThat(messages).isNotNull();
     List<byte[]> contents =
         getAttachmentsContent((MimeMultipart) messages.get(0).getMimeMessage().getContent());
     assertThat(new String(contents.get(1))).isEqualTo("toto1");
@@ -596,7 +583,7 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     List<WiserMessage> messages = server.getMessages();
-    // FIXME assumeNotNull(messages);
+    assertThat(messages).isNotNull();
     List<byte[]> contents =
         getAttachmentsContent((MimeMultipart) messages.get(0).getMimeMessage().getContent());
     assertThat(new String(contents.get(1))).isEqualTo("toto1");
@@ -650,7 +637,7 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     List<WiserMessage> messages = server.getMessages();
-    // FIXME assumeNotNull(messages);
+    assertThat(messages).isNotNull();
     assertThat(
             (String)
                 ((MimeMultipart) messages.get(0).getMimeMessage().getContent())
@@ -677,7 +664,7 @@ public class EmailConnectorTest {
     executeConnector(parameters);
 
     List<WiserMessage> messages = server.getMessages();
-    // FIXME assumeNotNull(messages);
+    assertThat(messages).isNotNull();
     assertThat(
             (String)
                 ((MimeMultipart) messages.get(0).getMimeMessage().getContent())
