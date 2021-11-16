@@ -1,14 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.bonitasoft.presales.connectors</groupId>
     <artifactId>bonita-connector-email-templating</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <name>bonita-connector-email-templating</name>
     <packaging>jar</packaging>
 
     <properties>
-        <bonita.engine.version>7.12.1</bonita.engine.version>
+        <bonita.engine.version>7.13.0</bonita.engine.version>
 
         <!-- Maven -->
 
@@ -37,8 +38,8 @@
         <assertj-core.version>3.20.2</assertj-core.version>
         <assertj.version>1.7.25</assertj.version>
         <mockito-core.version>3.11.2</mockito-core.version>
-        <logback-classic.version>1.2.3</logback-classic.version>
-        <slfj.version>1.7.30</slfj.version>
+<!--        <logback-classic.version>1.2.3</logback-classic.version>-->
+<!--        <slfj.version>1.7.30</slfj.version>-->
         <velocity.version>1.7</velocity.version>
         <velocity-tool.version>2.0</velocity-tool.version>
         <commons-io.version>2.8.0</commons-io.version>
@@ -56,11 +57,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <artifactId>bonita-common</artifactId>
-                <groupId>org.bonitasoft.engine</groupId>
+                <groupId>org.bonitasoft.runtime</groupId>
+                <artifactId>bonita-runtime-bom</artifactId>
                 <version>${bonita.engine.version}</version>
-                <scope>provided</scope>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
@@ -101,11 +104,11 @@
                 <artifactId>subethasmtp</artifactId>
                 <version>${subethamail.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slfj.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.slf4j</groupId>-->
+<!--                <artifactId>slf4j-simple</artifactId>-->
+<!--                <version>${slfj.version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
@@ -158,12 +161,12 @@
             <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback-classic.version}</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-classic</artifactId>-->
+<!--            <version>${logback-classic.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -267,9 +270,9 @@
                 <version>2.12.1</version>
                 <configuration>
                     <java>
-                        <importOrder />
-                        <removeUnusedImports />
-                        <googleJavaFormat />
+                        <importOrder/>
+                        <removeUnusedImports/>
+                        <googleJavaFormat/>
                     </java>
                 </configuration>
             </plugin>
