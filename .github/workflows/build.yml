@@ -20,8 +20,9 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
-          distribution: 'adopt'
           server-id: github
+          distribution: 'adopt'
+          cache: 'maven'
 
       - name: Build and test
         run: ./mvnw clean spotless:check verify -D--illegal-access=warn
