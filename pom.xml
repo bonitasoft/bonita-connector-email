@@ -3,7 +3,7 @@
 
     <groupId>com.bonitasoft.presales.connectors</groupId>
     <artifactId>bonita-connector-email-templating</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.1</version>
     <name>bonita-connector-email-templating</name>
     <packaging>jar</packaging>
 
@@ -288,7 +288,7 @@
         <url>https://github.com/${github.owner}/${project.artifactId}</url>
         <developerConnection>scm:git:${project.scm.url}.git</developerConnection>
         <connection>scm:git:${project.scm.url}.git</connection>
-        <tag>HEAD</tag>
+        <tag>3.0.1</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
