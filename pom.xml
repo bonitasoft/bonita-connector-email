@@ -115,7 +115,6 @@
             <artifactId>velocity-engine-core</artifactId>
         </dependency>
 
-
         <!-- Tests -->
         <dependency>
             <groupId>org.bonitasoft.engine</groupId>
@@ -268,6 +267,9 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>6.5.0</version>
+                <configuration>
+                    <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
