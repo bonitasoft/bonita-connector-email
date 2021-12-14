@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.bonitasoft.presales.connectors</groupId>
     <artifactId>bonita-connector-email-templating</artifactId>
-    <version>3.0.2-SNAPSHOT</version>
+    <version>3.0.2</version>
     <name>bonita-connector-email-templating</name>
     <packaging>jar</packaging>
 
@@ -250,9 +249,9 @@
                 <version>2.12.1</version>
                 <configuration>
                     <java>
-                        <importOrder/>
-                        <removeUnusedImports/>
-                        <googleJavaFormat/>
+                        <importOrder />
+                        <removeUnusedImports />
+                        <googleJavaFormat />
                     </java>
                 </configuration>
             </plugin>
@@ -284,7 +283,7 @@
         <url>https://github.com/${github.owner}/${project.artifactId}</url>
         <developerConnection>scm:git:${project.scm.url}.git</developerConnection>
         <connection>scm:git:${project.scm.url}.git</connection>
-        <tag>HEAD</tag>
+        <tag>3.0.2</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
