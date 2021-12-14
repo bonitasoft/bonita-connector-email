@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.bonitasoft.presales.connectors</groupId>
@@ -11,10 +12,7 @@
         <bonita.engine.version>7.13.0</bonita.engine.version>
 
         <!-- Maven -->
-
-        <!-- keep compatible with 2021.1 & 2021.2-beta series -->
-        <java.version>1.8</java.version>
-        <!--<java.version>11</java.version>-->
+        <java.version>11</java.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -37,10 +35,7 @@
         <assertj-core.version>3.20.2</assertj-core.version>
         <assertj.version>1.7.25</assertj.version>
         <mockito-core.version>3.11.2</mockito-core.version>
-<!--        <logback-classic.version>1.2.3</logback-classic.version>-->
-<!--        <slfj.version>1.7.30</slfj.version>-->
-        <velocity.version>1.7</velocity.version>
-        <velocity-tool.version>2.0</velocity-tool.version>
+        <velocity.version>2.3</velocity.version>
         <commons-io.version>2.8.0</commons-io.version>
         <subethamail.version>3.1.5</subethamail.version>
 
@@ -75,13 +70,8 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
+                <artifactId>velocity-engine-core</artifactId>
                 <version>${velocity.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity-tools</artifactId>
-                <version>${velocity-tool.version}</version>
             </dependency>
             <dependency>
                 <artifactId>junit</artifactId>
@@ -103,11 +93,6 @@
                 <artifactId>subethasmtp</artifactId>
                 <version>${subethamail.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.slf4j</groupId>-->
-<!--                <artifactId>slf4j-simple</artifactId>-->
-<!--                <version>${slfj.version}</version>-->
-<!--            </dependency>-->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
@@ -127,12 +112,9 @@
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
+            <artifactId>velocity-engine-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-tools</artifactId>
-        </dependency>
+
 
         <!-- Tests -->
         <dependency>
@@ -147,6 +129,12 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit-jupiter-engine.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -160,12 +148,6 @@
             <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>ch.qos.logback</groupId>-->
-<!--            <artifactId>logback-classic</artifactId>-->
-<!--            <version>${logback-classic.version}</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -269,9 +251,9 @@
                 <version>2.12.1</version>
                 <configuration>
                     <java>
-                        <importOrder />
-                        <removeUnusedImports />
-                        <googleJavaFormat />
+                        <importOrder/>
+                        <removeUnusedImports/>
+                        <googleJavaFormat/>
                     </java>
                 </configuration>
             </plugin>
@@ -281,6 +263,18 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>6.5.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

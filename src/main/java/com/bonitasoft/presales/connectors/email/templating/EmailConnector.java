@@ -392,7 +392,7 @@ public class EmailConnector extends AbstractConnector {
       Template template = new Template();
       template.setRuntimeServices(runtimeServices);
       StringReader stringReader = new StringReader(messageTemplate);
-      SimpleNode simpleNode = runtimeServices.parse(stringReader, "mail templating");
+      SimpleNode simpleNode = runtimeServices.parse(stringReader, template);
       template.setData(simpleNode);
       template.initDocument();
 

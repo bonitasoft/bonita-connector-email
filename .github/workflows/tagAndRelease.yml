@@ -54,7 +54,7 @@ jobs:
         with:
           java-version: 11
           server-id: github
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: 'maven'
 
       - name: Configure Git user
