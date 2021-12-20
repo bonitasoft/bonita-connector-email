@@ -26,7 +26,7 @@ jobs:
           git config user.name "GitHub Actions"
 
       - name: Build and test
-        run: ./mvnw clean spotless:check verify
+        run: ./mvnw clean verify
 
       - name: Check plugins
         run: ./mvnw versions:display-plugin-updates

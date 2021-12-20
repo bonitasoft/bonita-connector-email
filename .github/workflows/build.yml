@@ -25,7 +25,7 @@ jobs:
           cache: 'maven'
 
       - name: Build and test
-        run: ./mvnw clean spotless:check verify -D--illegal-access=warn
+        run: ./mvnw clean verify -D--illegal-access=warn
 
       - name: Get version from pom
         id: get-version
