@@ -6,9 +6,7 @@ jobs:
   create-tag:
     name: Create Tag
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    permissions: write-all
 
     steps:
       - name: Checkout
