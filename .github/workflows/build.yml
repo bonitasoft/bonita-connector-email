@@ -41,13 +41,7 @@ jobs:
           echo "version: ${{ steps.get-version.outputs.version }}"
           echo "final_name: ${{ steps.get-version.outputs.final-name }}"
 
-# not used
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: "${{ steps.get-version.outputs.final-name }}-all.zip"
-#          path: "target/${{ steps.get-version.outputs.final-name }}-all.zip"
-#
-#      - name: Publish package
-#        run: ./mvnw --batch-mode deploy
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish package
+        run: ./mvnw --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
