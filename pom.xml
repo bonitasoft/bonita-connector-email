@@ -3,8 +3,8 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.bonitasoft.connectors</groupId>
-    <artifactId>bonita-connector-email</artifactId>
+    <groupId>org.rbioteau.connectors</groupId>
+    <artifactId>my-email-connector</artifactId>
     <version>1.4.0-SNAPSHOT</version>
 
     <name>Bonita Email Connector</name>
@@ -37,7 +37,7 @@
         <maven.build.timestamp.format>yyyy.MM.dd-hh.mm</maven.build.timestamp.format>
 
         <!--Email Connector -->
-        <email.def.id>email</email.def.id>
+        <email.def.id>my-email</email.def.id>
         <email.def.version>1.2.0</email.def.version>
         <email.impl.id>${email.def.id}-impl</email.impl.id>
         <email.impl.version>${project.version}</email.impl.version>
@@ -50,27 +50,25 @@
         <bonita-runtime.version>7.13.0</bonita-runtime.version>
 
         <!-- Test -->
-        <junit-jupiter-engine.version>5.6.2</junit-jupiter-engine.version>
-        <junit-platform-runner.version>1.6.2</junit-platform-runner.version>
+        <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
         <greenmail.version>1.6.0</greenmail.version>
-        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
         <mockito-core.version>3.5.13</mockito-core.version>
-        <assertj-core.version>3.16.1</assertj-core.version>
-        <logback-classic.version>1.2.3</logback-classic.version>
+        <assertj-core.version>3.22.0</assertj-core.version>
+        <logback-classic.version>1.2.11</logback-classic.version>
 
         <!-- Maven plugins -->
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy-all.version>2.4.20</groovy-all.version>
-        <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.0</maven-source-plugin.version>
-        <license-maven-plugin.version>4.0.rc2</license-maven-plugin.version>
+        <license-maven-plugin.version>4.1</license-maven-plugin.version>
 
         <!-- Sonar -->
         <sonar.projectKey>bonitasoft_bonita-connector-email</sonar.projectKey>
@@ -129,12 +127,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-runner</artifactId>
-            <version>${junit-platform-runner.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito-core.version}</version>
@@ -186,6 +178,10 @@
         </resources>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
@@ -245,13 +241,6 @@
                             <include>**/*Test.java</include>
                         </includes>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.junit.platform</groupId>
-                            <artifactId>junit-platform-runner</artifactId>
-                            <version>${junit-platform-runner.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
