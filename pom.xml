@@ -51,7 +51,7 @@
 
         <!-- Test -->
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
-        <greenmail.version>1.6.0</greenmail.version>
+        <greenmail.version>1.6.9</greenmail.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
         <mockito-core.version>3.5.13</mockito-core.version>
