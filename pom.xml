@@ -1,10 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.rbioteau.connectors</groupId>
-    <artifactId>my-email-connector</artifactId>
+    <groupId>org.bonitasoft.connectors</groupId>
+    <artifactId>bonita-connector-email</artifactId>
     <version>1.4.0-SNAPSHOT</version>
 
     <name>Bonita Email Connector</name>
@@ -37,7 +35,7 @@
         <maven.build.timestamp.format>yyyy.MM.dd-hh.mm</maven.build.timestamp.format>
 
         <!--Email Connector -->
-        <email.def.id>my-email</email.def.id>
+        <email.def.id>email</email.def.id>
         <email.def.version>1.2.0</email.def.version>
         <email.impl.id>${email.def.id}-impl</email.impl.id>
         <email.impl.version>${project.version}</email.impl.version>
@@ -57,6 +55,9 @@
         <mockito-core.version>4.8.0</mockito-core.version>
         <assertj-core.version>3.23.1</assertj-core.version>
         <logback-classic.version>1.2.11</logback-classic.version>
+        <testcontainers.version>1.17.3</testcontainers.version>
+        <bonita-java-client.version>0.0.9</bonita-java-client.version>
+        <awaitility.version>4.2.0</awaitility.version>
 
         <!-- Maven plugins -->
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
@@ -82,6 +83,13 @@
                 <groupId>org.bonitasoft.runtime</groupId>
                 <artifactId>bonita-runtime-bom</artifactId>
                 <version>${bonita-runtime.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -157,11 +165,41 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bonitasoft.web</groupId>
+            <artifactId>bonita-java-client</artifactId>
+            <version>${bonita-java-client.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback-classic.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-embedder</artifactId>
+            <version>3.8.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>3.8.6</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
