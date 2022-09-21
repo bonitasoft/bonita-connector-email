@@ -17,8 +17,8 @@
  */
 package org.bonitasoft.connectors.email;
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
 
 /**
  * The class SMTPAuthenticator represents an object that knows how
