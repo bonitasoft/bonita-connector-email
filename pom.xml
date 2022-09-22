@@ -200,7 +200,30 @@
             <version>3.8.6</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-http</artifactId>
+            <version>3.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-impl</artifactId>
+            <version>1.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-connector-basic</artifactId>
+            <version>1.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-transport-wagon</artifactId>
+            <version>1.8.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -389,10 +412,10 @@
                 </executions>
             </plugin>
             <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-failsafe-plugin</artifactId>
-                 <executions>
-                   <execution>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
                         <id>integration-tests-7.13</id>
                         <goals>
                             <goal>integration-test</goal>
@@ -400,7 +423,7 @@
                         <configuration>
                             <systemProperties>
                                 <bonita.version>7.13.0</bonita.version>
-						     </systemProperties>
+                            </systemProperties>
                         </configuration>
                     </execution>
                     <execution>
@@ -411,7 +434,7 @@
                         <configuration>
                             <systemProperties>
                                 <bonita.version>7.14.0</bonita.version>
-                             </systemProperties>
+                            </systemProperties>
                         </configuration>
                     </execution>
                     <execution>
@@ -419,7 +442,7 @@
                             <goal>verify</goal>
                         </goals>
                     </execution>
-                 </executions>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -17,13 +17,14 @@
  */
 package org.bonitasoft.connectors.test;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.bonitasoft.engine.bpm.bar.BusinessArchive;
@@ -47,14 +48,19 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 public class BonitaContainer extends GenericContainer<BonitaContainer> {
 
+    private static final String TECH_USER = "install";
+    private static final String TECH_PASSWORD = "install";
     private static final Logger LOGGER = LoggerFactory.getLogger(BonitaContainer.class);
     private static final String DEFAULT_USER = "test.user";
     private static final String DEFAULT_PASSWORD = "bpm";
     private User user;
 
     public BonitaContainer() {
-        super(String.format("bonita:%s", Objects.requireNonNull(System.getProperty("bonita.version", "7.13"),
-                "'bonita.version' system property not defined !")));
+        this(System.getProperty("bonita.version", "7.13"));
+    }
+    
+    public BonitaContainer(String version) {
+        super(String.format("bonita:%s", requireNonNull(version, "Bonita image version not defined !")));
         withExposedPorts(8080);
         waitingFor(Wait.forHttp("/bonita"));
         withLogConsumer(new Slf4jLogConsumer(LOGGER));
@@ -74,7 +80,7 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
     private User createDefaultUser() {
         var client = newClient();
         try {
-            client.login("install", "install");
+            client.login(TECH_USER, TECH_PASSWORD);
             var user = client.users().createUser(new UserCreateRequest()
                     .userName(DEFAULT_USER)
                     .password(DEFAULT_PASSWORD)
@@ -96,7 +102,7 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
             processFile = Files.createTempFile("process", ".bar").toFile();
             processFile.delete();
             BusinessArchiveFactory.writeBusinessArchiveToFile(bar, processFile);
-            client.login("install", "install");
+            client.login(TECH_USER, TECH_PASSWORD);
             client.processes().importProcess(processFile, ProcessImportPolicy.REPLACE_DUPLICATES);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -111,7 +117,7 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
     public long startProcess(String processName) {
         var client = newClient();
         try {
-            client.login("install", "install");
+            client.login(TECH_USER, TECH_PASSWORD);
             List<ProcessDefinition> result = client.processes()
                     .searchProcesses(new SearchProcessesQueryParams().p(0).c(1).f(List.of("name=" + processName)));
             if (result.isEmpty()) {
@@ -132,7 +138,7 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
     public Callable<String> pollStateOf(long caseId) {
         return () -> {
             var client = newClient();
-            client.login("install", "install");
+            client.login(TECH_USER, TECH_PASSWORD);
             try {
                 var instance = client.get(ProcessInstanceApi.class).getProcessInstanceById(String.valueOf(caseId), (String) null);
                 return instance.getState().toLowerCase();
@@ -160,7 +166,7 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
     public String getProcessVariableValue(long caseId, String variableName) {
         var client = newClient();
         try {
-            client.login("install", "install"); 
+            client.login(TECH_USER, TECH_PASSWORD); 
             return client.get(ProcessInstanceVariableApi.class)
                     .getVariableByProcessInstanceId(String.valueOf(caseId), variableName)
                     .getValue();

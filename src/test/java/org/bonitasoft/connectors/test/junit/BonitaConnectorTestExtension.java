@@ -34,16 +34,12 @@ public class BonitaConnectorTestExtension implements BeforeAllCallback, AfterAll
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return parameterContext.getParameter().getType().equals(BonitaContainer.class)
-                || parameterContext.getParameter().getType().equals(ConnectorExecutor.class);
+        return parameterContext.getParameter().getType().equals(ConnectorExecutor.class);
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        if(parameterContext.getParameter().getType().equals(BonitaContainer.class)) {
-            return BONITA_CONTAINER;
-        }
         if(parameterContext.getParameter().getType().equals(ConnectorExecutor.class)) {
             return new ConnectorExecutorImpl(BONITA_CONTAINER);
         }

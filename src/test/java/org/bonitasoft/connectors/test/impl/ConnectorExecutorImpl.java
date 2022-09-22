@@ -92,8 +92,12 @@ public class ConnectorExecutorImpl implements ConnectorExecutor {
     }
 
     private String evaluate(String expression) throws IOException {
-        var workingDirectory = new File("").getAbsolutePath();
-        var pomFile = new File("").getAbsoluteFile().toPath().resolve("pom.xml");
+        var baseDir = new File("").getAbsoluteFile().toPath();
+        var workingDirectory = baseDir.toFile().getAbsolutePath();
+        var pomFile = baseDir.resolve("pom.xml");
+        if(!pomFile.toFile().exists()) {
+            throw new IllegalStateException("pom.xml file not found in "+ baseDir);
+        }
         var outputFile = Files.createTempFile("evaluate", ".txt");
         try {
             var mavenCli = new MavenCli();
@@ -114,12 +118,16 @@ public class ConnectorExecutorImpl implements ConnectorExecutor {
             Files.delete(outputFile);
         }
     }
+    
 
     private List<Path> resolveRuntimeDependencies() throws IOException {
-        Path pomFile = new File("").getAbsoluteFile().toPath().resolve("pom.xml");
-        assertThat(pomFile).exists();
+        var baseDir = new File("").getAbsoluteFile().toPath();
+        var pomFile = baseDir.resolve("pom.xml");
+        if(!pomFile.toFile().exists()) {
+            throw new IllegalStateException("pom.xml file not found in "+ baseDir);
+        }
         var outputFile = Files.createTempFile("deps", ".txt");
-        var workingDirectory = new File("").getAbsolutePath();
+        var workingDirectory = baseDir.toFile().getAbsolutePath();
         var mavenCli = new MavenCli();
         System.setProperty("maven.multiModuleProjectDirectory", workingDirectory);
         try {
