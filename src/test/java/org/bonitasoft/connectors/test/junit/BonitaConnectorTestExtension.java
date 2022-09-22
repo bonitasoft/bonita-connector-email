@@ -53,12 +53,10 @@ public class BonitaConnectorTestExtension implements BeforeAllCallback, AfterAll
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
         BONITA_CONTAINER.stop();
-        System.out.println("AFTER ALL");
     }
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        System.out.println("BEFORE ALL");
         BONITA_CONTAINER.start();
     }
 

@@ -58,6 +58,7 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
         withExposedPorts(8080);
         waitingFor(Wait.forHttp("/bonita"));
         withLogConsumer(new Slf4jLogConsumer(LOGGER));
+        withAccessToHost(true);
     }
 
     @Override
