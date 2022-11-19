@@ -54,7 +54,7 @@
         <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
         <mockito-core.version>4.8.0</mockito-core.version>
         <assertj-core.version>3.23.1</assertj-core.version>
-        <logback-classic.version>1.2.11</logback-classic.version>
+        <logback-classic.version>1.4.5</logback-classic.version>
         <testcontainers.version>1.17.3</testcontainers.version>
         <bonita-java-client.version>0.0.9</bonita-java-client.version>
         <awaitility.version>4.2.0</awaitility.version>
