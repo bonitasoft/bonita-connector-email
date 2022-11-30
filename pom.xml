@@ -45,7 +45,7 @@
         <jakarta.mail.version>1.6.7</jakarta.mail.version>
 
         <!-- Bonita -->
-        <bonita-runtime.version>7.13.0</bonita-runtime.version>
+        <bonita-runtime.version>7.15.0</bonita-runtime.version>
 
         <!-- Test -->
         <junit-jupiter-engine.version>5.9.1</junit-jupiter-engine.version>
