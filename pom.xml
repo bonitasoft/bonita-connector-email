@@ -71,6 +71,7 @@
         <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <license-maven-plugin.version>4.1</license-maven-plugin.version>
+        <maven-resolver.version>1.9.2</maven-resolver.version>
 
         <!-- Sonar -->
         <sonar.projectKey>bonitasoft_bonita-connector-email</sonar.projectKey>
@@ -188,17 +189,11 @@
             <version>${logback-classic.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-embedder</artifactId>
-            <version>3.8.6</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-compat</artifactId>
-            <version>3.8.6</version>
-            <scope>test</scope>
+          <dependency>
+		        <groupId>org.apache.maven.resolver</groupId>
+		        <artifactId>maven-resolver-api</artifactId>
+		        <version>${maven-resolver.version}</version>
+		        <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.wagon</groupId>
@@ -209,19 +204,31 @@
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-impl</artifactId>
-            <version>1.6.3</version>
+            <version>${maven-resolver.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-connector-basic</artifactId>
-            <version>1.6.3</version>
+            <version>${maven-resolver.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-transport-wagon</artifactId>
-            <version>1.6.3</version>
+            <version>${maven-resolver.version}</version>
+            <scope>test</scope>
+        </dependency>
+         <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-embedder</artifactId>
+            <version>3.8.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>3.8.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
