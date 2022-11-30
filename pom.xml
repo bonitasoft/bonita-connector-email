@@ -49,7 +49,7 @@
 
         <!-- Test -->
         <junit-jupiter-engine.version>5.9.1</junit-jupiter-engine.version>
-        <greenmail.version>1.6.10</greenmail.version>
+        <greenmail.version>1.6.11</greenmail.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
         <mockito-core.version>4.8.0</mockito-core.version>
