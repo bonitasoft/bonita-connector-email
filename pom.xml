@@ -71,7 +71,7 @@
         <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <license-maven-plugin.version>4.1</license-maven-plugin.version>
-        <maven-resolver.version>1.9.2</maven-resolver.version>
+        <maven-resolver.version>1.9.4</maven-resolver.version>
 
         <!-- Sonar -->
         <sonar.projectKey>bonitasoft_bonita-connector-email</sonar.projectKey>
