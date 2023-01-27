@@ -56,7 +56,7 @@
         <assertj-core.version>3.23.1</assertj-core.version>
         <logback-classic.version>1.2.11</logback-classic.version>
         <testcontainers.version>1.17.3</testcontainers.version>
-        <bonita-java-client.version>0.0.9</bonita-java-client.version>
+        <bonita-java-client.version>0.0.10</bonita-java-client.version>
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- Maven plugins -->
