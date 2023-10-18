@@ -141,9 +141,9 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
             client.login(TECH_USER, TECH_PASSWORD);
             try {
                 var instance = client.get(ProcessInstanceApi.class).getProcessInstanceById(String.valueOf(caseId), (String) null);
-                return instance.getState().toLowerCase();
+                return instance.getState().name().toLowerCase();
             } catch (NotFoundException e) {
-                return getCompletedProcess(client, String.valueOf(caseId)).getState().toLowerCase();
+                return getCompletedProcess(client, String.valueOf(caseId)).getState().name().toLowerCase();
             }finally {
                 client.logout();
             }

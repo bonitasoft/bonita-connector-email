@@ -154,7 +154,7 @@ public class ConnectorExecutorImpl implements ConnectorExecutor {
                             //windows case
                             path = path + ":" + table[5];
                         }
-                        return path;
+                        return path.split(" -- ")[0];
                     })
                     .map(absolutePath -> Paths.get(absolutePath))
                     .collect(Collectors.toList());
