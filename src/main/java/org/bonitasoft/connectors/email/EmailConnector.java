@@ -41,7 +41,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.bonitasoft.engine.api.ProcessAPI;
@@ -469,17 +468,16 @@ public class EmailConnector extends AbstractConnector {
     }
 
     private void addBodyPart(ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Document document)
-            throws DocumentNotFoundException, MessagingException, UnsupportedEncodingException {
-        MimeBodyPart bodyPart;
+            throws DocumentNotFoundException, MessagingException {
         String fileName = document.getContentFileName();
         byte[] docContent = processAPI.getDocumentContent(document.getContentStorageId());
         if (docContent != null) {
             String mimeType = document.getContentMimeType();
-            bodyPart = new MimeBodyPart();
+            var bodyPart = new MimeBodyPart();
             final DataSource source = new ByteArrayDataSource(docContent, mimeType);
             final DataHandler dataHandler = new DataHandler(source);
             bodyPart.setDataHandler(dataHandler);
-            bodyPart.setFileName(MimeUtility.encodeText(fileName));
+            bodyPart.setFileName(fileName);
             bodyParts.add(bodyPart);
         }
     }

@@ -36,7 +36,6 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.IOUtils;
 import org.bonitasoft.engine.api.APIAccessor;
@@ -440,34 +439,6 @@ class EmailConnectorIT {
         List<byte[]> contents = getAttachmentsContent((MimeMultipart) (Multipart) messages[0].getContent());
         assertThat(new String(contents.get(1))).isEqualTo("toto1");
         assertThat(new String(contents.get(2))).isEqualTo("toto2");
-    }
-
-    @Test
-    void sendFileDocumentWithSpecialEncoding() throws BonitaException, MessagingException, IOException {
-        DocumentImpl document = new DocumentImpl();
-        document.setAuthor(1);
-        document.setContentMimeType("application/octet-stream");
-        document.setContentStorageId("storageId");
-        document.setCreationDate(new Date());
-        document.setFileName("最日本最.TXT");
-        document.setHasContent(true);
-        document.setId(1);
-        document.setProcessInstanceId(1);
-        document.setName("Document1");
-        when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
-        when(processAPI.getLastDocument(1L, "Document1")).thenReturn(document);
-        when(processAPI.getDocumentContent("storageId")).thenReturn("toto".getBytes());
-        Map<String, Object> parameters = getBasicSettings();
-        List<String> attachments = Collections.singletonList("Document1");
-        parameters.put(EmailConnector.ATTACHMENTS, attachments);
-
-        executeConnector(parameters);
-
-        MimeMessage[] messages = greenMail.getReceivedMessages();
-        assertEquals(1, messages.length);
-        assertThat(messages[0].getContentType()).startsWith("multipart/mixed;");
-        assertThat(((MimeMultipart) messages[0].getContent()).getBodyPart(1).getFileName())
-                .isEqualTo(MimeUtility.encodeText("最日本最.TXT"));
     }
 
     @Test
