@@ -72,7 +72,7 @@
         <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <license-maven-plugin.version>4.1</license-maven-plugin.version>
-        <maven-resolver.version>1.9.16</maven-resolver.version>
+        <maven-resolver.version>1.9.18</maven-resolver.version>
         <maven.version>3.9.5</maven.version>
         <wagon-http.version>3.5.3</wagon-http.version>
 
