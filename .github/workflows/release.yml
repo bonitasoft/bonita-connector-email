@@ -16,3 +16,4 @@ jobs:
     with:
       release-version: ${{ github.event.inputs.version }}
       build-and-release-command-line: ./mvnw clean verify -DskipTests -Pdeploy
+    secrets: inherit
