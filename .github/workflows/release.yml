@@ -12,7 +12,7 @@ on:
 
 jobs:
   release:
-    uses: bonitasoft/github-workflows/.github/workflows/_reusable_release_connector.yml@chore/release_connector_workflow
+    uses: bonitasoft/github-workflows/.github/workflows/_reusable_release_connector.yml@main
     with:
       release-version: ${{ github.event.inputs.version }}
       build-and-release-command-line: ./mvnw clean verify -DskipTests -Pdeploy
