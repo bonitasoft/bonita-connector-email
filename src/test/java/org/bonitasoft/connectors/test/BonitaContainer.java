@@ -56,7 +56,7 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
     private User user;
 
     public BonitaContainer() {
-        this(System.getProperty("bonita.version", "7.13"));
+        this(System.getProperty("bonita.version", "10.2"));
     }
     
     public BonitaContainer(String version) {

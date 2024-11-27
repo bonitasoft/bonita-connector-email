@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -52,6 +53,8 @@ import org.bonitasoft.engine.bpm.process.DesignProcessDefinition;
 import org.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilder;
 import org.bonitasoft.engine.expression.Expression;
 import org.bonitasoft.engine.expression.ExpressionBuilder;
+import org.bonitasoft.engine.expression.ExpressionInterpreter;
+import org.bonitasoft.engine.expression.ExpressionType;
 import org.bonitasoft.engine.expression.InvalidExpressionException;
 import org.bonitasoft.engine.operation.OperationBuilder;
 
@@ -167,6 +170,9 @@ public class ConnectorExecutorImpl implements ConnectorExecutor {
         var processBuilder = new ProcessDefinitionBuilder();
         processBuilder.createNewInstance("PROCESS_UNDER_TEST", "1.0");
         processBuilder.addActor("system");
+        processBuilder.addDocumentDefinition("myDoc")
+                .addFile("myDoc.docx")
+                .addContentFileName("myDoc.docx");
         var expConverter = expressionConverter();
         var connectorBuilder = processBuilder.addConnector("connector-under-test",
                 configuration.getDefinitionId(),
@@ -197,8 +203,11 @@ public class ConnectorExecutorImpl implements ConnectorExecutor {
             try {
                 return expBuilder.createExpression(UUID.randomUUID().toString(),
                         exp.getContent(),
+                        exp.getType(),
                         exp.getReturnType(),
-                        exp.getType());
+                        Objects.equals(exp.getType(), ExpressionType.TYPE_READ_ONLY_SCRIPT) ? ExpressionInterpreter.GROOVY.name(): null,
+                        List.of()
+                        );
             } catch (InvalidExpressionException e) {
                 throw new RuntimeException(e);
             }
@@ -242,6 +251,10 @@ public class ConnectorExecutorImpl implements ConnectorExecutor {
         systemActor.addUser(container.getDefaultUser().getUserName());
         actorMapping.addActor(systemActor);
         barBuilder.setActorMapping(actorMapping);
+
+        try(var is = ConnectorExecutorImpl.class.getResourceAsStream("/myDoc.docx")){
+            barBuilder.addDocumentResource(new BarResource("myDoc.docx", is.readAllBytes()));
+        }
 
         return barBuilder.done();
     }
