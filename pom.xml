@@ -70,7 +70,7 @@
         <maven-failsafe-plugin.version>3.2.3</maven-failsafe-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <license-maven-plugin.version>4.3</license-maven-plugin.version>
         <maven-resolver.version>1.9.18</maven-resolver.version>
         <maven.version>3.9.6</maven.version>
