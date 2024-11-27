@@ -20,6 +20,7 @@ package org.bonitasoft.connectors.email;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
@@ -61,6 +62,7 @@ class EmailConnectorRuntimeIT {
                 .addInput(EmailConnector.TO, Expression.stringValue("receiver@bonitasoft.com"))
                 .addInput(EmailConnector.SUBJECT, Expression.stringValue("Testing Subject"))
                 .addInput(EmailConnector.MESSAGE, Expression.stringValue("Hello World"))
+                .addInput(EmailConnector.ATTACHMENTS, Expression.groovyScript("['myDoc']", List.class.getName()))
                 .build();
 
         Map<String, String> result = executor.execute(configuration);
@@ -74,7 +76,7 @@ class EmailConnectorRuntimeIT {
         assertThat(message.getFrom()[0]).hasToString("romain.bioteau@bonitasoft.com");
         assertThat(message.getRecipients(RecipientType.TO)[0]).hasToString("receiver@bonitasoft.com");
         assertThat(message.getSubject()).isEqualTo("Testing Subject");
-        assertThat(GreenMailUtil.getBody(message)).isEqualTo("Hello World");
+        assertThat(GreenMailUtil.getBody(message)).contains("Hello World");
     }
 
 }

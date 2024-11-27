@@ -470,7 +470,14 @@ public class EmailConnector extends AbstractConnector {
     private void addBodyPart(ProcessAPI processAPI, List<MimeBodyPart> bodyParts, Document document)
             throws DocumentNotFoundException, MessagingException {
         String fileName = document.getContentFileName();
-        byte[] docContent = processAPI.getDocumentContent(document.getContentStorageId());
+        byte[] docContent = null;
+        // Workaround RUNTIME-1919
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+        try {
+            docContent = processAPI.getDocumentContent(document.getContentStorageId());
+        }finally {
+            Thread.currentThread().setContextClassLoader(currentClassloader);
+        }
         if (docContent != null) {
             String mimeType = document.getContentMimeType();
             var bodyPart = new MimeBodyPart();
@@ -487,7 +494,14 @@ public class EmailConnector extends AbstractConnector {
         if (attachment instanceof String && !((String) attachment).trim().isEmpty()) {
             String docName = (String) attachment;
             long processInstanceId = getExecutionContext().getProcessInstanceId();
-            return processAPI.getLastDocument(processInstanceId, docName);
+            // Workaround RUNTIME-1919
+            ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+            try{
+                return processAPI.getLastDocument(processInstanceId, docName);
+            }finally {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+
         } else if (attachment instanceof Document) {
             return (Document) attachment;
         } else {
