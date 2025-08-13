@@ -68,7 +68,7 @@
         <groovy-all.version>2.4.20</groovy-all.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.2.3</maven-failsafe-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <central-maven-plugin>0.8.0</central-maven-plugin>
         <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <license-maven-plugin.version>4.3</license-maven-plugin.version>
@@ -354,14 +354,12 @@
                     <version>${sonar-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>${nexus-staging-maven-plugin.version}</version>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-maven-plugin.version}</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <serverId>ossrh</serverId>
-                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        <autoPublish>true</autoPublish>
                     </configuration>
                 </plugin>
             </plugins>
@@ -467,7 +465,7 @@
     </build>
 
     <profiles>
-        <!-- Deployment profile (required so these plugins are only used 
+        <!-- Deployment profile (required so these plugins are only used
             when deploying) -->
         <profile>
             <id>deploy</id>
@@ -486,7 +484,7 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <!-- Prevent `gpg` from using pinentry 
+                                    <!-- Prevent `gpg` from using pinentry
                                         programs -->
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
@@ -500,18 +498,6 @@
             </build>
         </profile>
     </profiles>
-
-    <distributionManagement>
-        <!-- Central Repository -->
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <scm>
         <developerConnection>scm:git:git@github.com:bonitasoft/bonita-connector-email.git</developerConnection>
