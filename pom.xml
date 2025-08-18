@@ -441,7 +441,7 @@
                             <systemProperties>
                                 <bonita.version>8.0.0</bonita.version>
                             </systemProperties>
-                            <argLine>-Dmaven.resolver.transport=wagon</argLine>
+                            <argLine>-Dmaven.resolver.transport=wagon -Dmaven.wagon.http.ssl.allowall=true</argLine>
                         </configuration>
                     </execution>
                     <execution>
