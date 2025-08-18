@@ -46,7 +46,6 @@ class EmailConnectorWithSSLIT {
     
     static {
         Security.setProperty("ssl.SocketFactory.provider", DummySSLSocketFactory.class.getName());
-        System.setProperty("javax.net.ssl.trustStore","$JAVA_HOME/lib/security/cacerts");
     }
     
     @RegisterExtension
