@@ -73,7 +73,7 @@ class EmailConnectorWithSSLIT {
     @Test
     void should_ssl_not_check_server_identity_when_autotrust_is_true() throws Exception {
         Map<String, Object> basicSSLSettings = getBasicSSLSettings();
-        basicSSLSettings.put(EmailConnector.TRUST_CERTIFICATE, false);
+        basicSSLSettings.put(EmailConnector.TRUST_CERTIFICATE, true);
         executeConnector(basicSSLSettings);
         
         final MimeMessage[] messages = greenMail.getReceivedMessages();
