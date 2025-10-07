@@ -68,7 +68,7 @@
         <groovy-all.version>2.4.20</groovy-all.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.2.3</maven-failsafe-plugin.version>
-        <central-maven-plugin>0.8.0</central-maven-plugin>
+        <central-maven-plugin.version>0.8.0</central-maven-plugin.version>
         <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <license-maven-plugin.version>4.3</license-maven-plugin.version>
@@ -461,6 +461,10 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
