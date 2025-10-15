@@ -13,6 +13,8 @@
 	<input name="trustCertificate" type="java.lang.Boolean" defaultValue="false" />
 	<input name="userName" type="java.lang.String" />
 	<input name="password" type="java.lang.String" />
+    <input name="authType" type="java.lang.String" defaultValue="Basic authentication"/>
+	<input name="oauth2AccessToken" type="java.lang.String" />
 	<input name="from" type="java.lang.String" mandatory="true" />
 	<input name="returnPath" type="java.lang.String" />
 	<input name="to" type="java.lang.String" mandatory="true" />
@@ -36,7 +38,12 @@
 		</widget>
 		<widget id="authentication" optional="false" xsi:type="definition:Group">
 			<widget id="username" inputName="userName" xsi:type="definition:Text" />
+            <widget xsi:type="definition:RadioGroup" id="authTypeRadio" inputName="authType">
+              <choices>Basic authentication</choices>
+              <choices>Oauth (XOAUTH2)</choices>
+            </widget>
       		<widget id="password" inputName="password" xsi:type="definition:Password"/>
+			<widget id="oauth2AccessToken" inputName="oauth2AccessToken" xsi:type="definition:Password"/>
 		</widget>
 	</page>
 	<page id="addressee">
