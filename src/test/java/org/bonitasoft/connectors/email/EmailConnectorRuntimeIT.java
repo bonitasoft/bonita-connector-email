@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 - 2020 Bonitasoft S.A.
+ * Copyright (C) 2009 - 2025 Bonitasoft S.A.
  * Bonitasoft, 32 rue Gustave Eiffel - 38000 Grenoble
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class EmailConnectorRuntimeIT {
     void test0(ConnectorExecutor executor) throws Exception {
         var hostPort = greenMail.getSmtp().getPort();
         var configuration = executor.newConfigurationBuilder()
-                .withConnectorDefinition("email", "1.2.0")
+                .withConnectorDefinition("email", "1.3.0")
                 .addInput(EmailConnector.SMTP_HOST, Expression.stringValue("host.testcontainers.internal"))
                 .addInput(EmailConnector.SMTP_PORT, Expression.intValue(hostPort))
                 .addInput(EmailConnector.SSL_SUPPORT, Expression.booleanValue(false))
@@ -62,6 +62,7 @@ class EmailConnectorRuntimeIT {
                 .addInput(EmailConnector.TO, Expression.stringValue("receiver@bonitasoft.com"))
                 .addInput(EmailConnector.SUBJECT, Expression.stringValue("Testing Subject"))
                 .addInput(EmailConnector.MESSAGE, Expression.stringValue("Hello World"))
+                .addInput(EmailConnector.AUTH_TYPE, Expression.stringValue(EmailConnector.BASIC_AUTH_TYPE))
                 .addInput(EmailConnector.ATTACHMENTS, Expression.groovyScript("['myDoc']", List.class.getName()))
                 .build();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 - 2020 Bonitasoft S.A.
+ * Copyright (C) 2009 - 2025 Bonitasoft S.A.
  * Bonitasoft, 32 rue Gustave Eiffel - 38000 Grenoble
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,6 +147,26 @@ class EmailConnectorTest {
 
         parameters.put("userName", null);
         parameters.put("password", "bonita");
+        validateConnector(parameters);
+    }
+
+    @Test
+    void validXOAuth2Authentication() throws ConnectorValidationException {
+        final Map<String, Object> parameters = getBasicSettings();
+        parameters.put(EmailConnector.AUTH_TYPE, EmailConnector.XOAUTH2_AUTH_TYPE);
+        parameters.put(EmailConnector.USER_NAME, "user@example.com");
+        parameters.put(EmailConnector.OAUTH2_ACCESS_TOKEN, "mock_access_token_12345");
+        validateConnector(parameters);
+    }
+
+    @Test
+    void validXOAuth2AuthenticationWithoutTokenShouldNotFail() throws ConnectorValidationException {
+        // When XOAUTH2 is enabled but token is missing, validation should still pass
+        // (authentication will fail at runtime, not at validation)
+        final Map<String, Object> parameters = getBasicSettings();
+        parameters.put(EmailConnector.AUTH_TYPE, EmailConnector.XOAUTH2_AUTH_TYPE);
+        parameters.put(EmailConnector.USER_NAME, "user@example.com");
+        parameters.put(EmailConnector.OAUTH2_ACCESS_TOKEN, null);
         validateConnector(parameters);
     }
 

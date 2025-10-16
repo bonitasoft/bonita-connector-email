@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 - 2020 Bonitasoft S.A.
+ * Copyright (C) 2009 - 2025 Bonitasoft S.A.
  * Bonitasoft, 32 rue Gustave Eiffel - 38000 Grenoble
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,6 +151,20 @@ public class EmailConnector extends AbstractConnector {
      */
     public static final String TRUST_CERTIFICATE = "trustCertificate";
 
+    /**
+     * Indicates which authentication type to use (Basic or XOAUTH2)
+     */
+    public static final String AUTH_TYPE = "authType";
+
+    public static final String XOAUTH2_AUTH_TYPE = "Oauth (XOAUTH2)";
+
+    public static final String BASIC_AUTH_TYPE = "Basic authentication";
+
+    /**
+     * The OAuth2 access token for XOAUTH2 authentication
+     */
+    public static final String OAUTH2_ACCESS_TOKEN = "oauth2AccessToken";
+
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Override
@@ -172,6 +186,14 @@ public class EmailConnector extends AbstractConnector {
         final String smtpHost = (String) getInputParameter(SMTP_HOST);
         if (smtpHost == null) {
             errors.add("smtpHost cannot be null!");
+        }
+
+        final String authType = (String) getInputParameter(AUTH_TYPE);
+        if (XOAUTH2_AUTH_TYPE.equals(authType)) {
+            final String username = (String) getInputParameter(USER_NAME);
+            checkInputParameter(username, errors);
+            final String accessToken = (String) getInputParameter(OAUTH2_ACCESS_TOKEN);
+            checkInputParameter(accessToken, errors);
         }
 
         final String from = (String) getInputParameter(FROM);
@@ -220,8 +242,8 @@ public class EmailConnector extends AbstractConnector {
         logInputParameter(SMTP_PORT);
         logInputParameter(SMTP_HOST);
         logInputParameter(REPLY_TO);
+        logInputParameter(AUTH_TYPE);
 
-        logger.info(PASSWORD + " ******");
         @SuppressWarnings("unchecked")
         List<Object> attachments = (List<Object>) getInputParameter(ATTACHMENTS);
 
@@ -303,10 +325,44 @@ public class EmailConnector extends AbstractConnector {
         }
         Session session;
         final String username = (String) getInputParameter(USER_NAME);
+        final String authType = (String) getInputParameter(AUTH_TYPE);
+        final Boolean useXoauth2 = XOAUTH2_AUTH_TYPE.equals(authType);
+
+        if (Boolean.TRUE.equals(useXoauth2)) {
+            // XOAUTH2 authentication
+            session = getOauthSession(username, properties);
+        } else {
+            // Basic username/password authentication
+            session = getBasiAuthSession(username, properties);
+        }
+        return session;
+    }
+
+    private Session getBasiAuthSession(String username, Properties properties) {
+        final Session session;
         final String password = (String) getInputParameter(PASSWORD);
         if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
             properties.put("mail.smtp.auth", "true");
             final Authenticator authenticator = new SMTPAuthenticator(username, password);
+            session = Session.getInstance(properties, authenticator);
+        } else {
+            session = Session.getInstance(properties, null);
+        }
+        return session;
+    }
+
+    private Session getOauthSession(String username, Properties properties) {
+        final Session session;
+        // OAuth integration requires SASL XOAUTH2 format to encode and transmit the access token
+        final String accessToken = (String) getInputParameter(OAUTH2_ACCESS_TOKEN);
+        if (username != null && !username.isEmpty() && accessToken != null && !accessToken.isEmpty()) {
+            properties.put("mail.smtp.auth", "true");
+            properties.put("mail.smtp.auth.mechanisms", "XOAUTH2");
+            properties.put("mail.smtp.sasl.enable", "true");
+            properties.put("mail.smtp.sasl.mechanisms", "XOAUTH2");
+            // Note: The OAuth2 token is passed via the Authenticator, not as a property
+            // JavaMail's XOAUTH2 SASL mechanism handles the token internally
+            final Authenticator authenticator = new XOAUTH2Authenticator(username, accessToken);
             session = Session.getInstance(properties, authenticator);
         } else {
             session = Session.getInstance(properties, null);
