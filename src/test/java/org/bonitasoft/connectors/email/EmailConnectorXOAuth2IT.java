@@ -156,7 +156,7 @@ class EmailConnectorXOAuth2IT {
         connector.execute();
 
         // If we get here without exception, the email was sent successfully
-        System.out.println("Email sent successfully using XOAUTH2 authentication!");
+        System.out.println("Email sent successfully using XOAUTH2 authentication with Office 365!");
     }
 
     /**

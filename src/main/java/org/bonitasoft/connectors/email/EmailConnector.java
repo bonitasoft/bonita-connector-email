@@ -333,12 +333,12 @@ public class EmailConnector extends AbstractConnector {
             session = getOauthSession(username, properties);
         } else {
             // Basic username/password authentication
-            session = getBasiAuthSession(username, properties);
+            session = getBasicAuthSession(username, properties);
         }
         return session;
     }
 
-    private Session getBasiAuthSession(String username, Properties properties) {
+    private Session getBasicAuthSession(String username, Properties properties) {
         final Session session;
         final String password = (String) getInputParameter(PASSWORD);
         if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {

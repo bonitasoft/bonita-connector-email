@@ -50,7 +50,7 @@ class EmailConnectorRuntimeIT {
     }
 
     @Test
-    void test0(ConnectorExecutor executor) throws Exception {
+    void should_send_email(ConnectorExecutor executor) throws Exception {
         var hostPort = greenMail.getSmtp().getPort();
         var configuration = executor.newConfigurationBuilder()
                 .withConnectorDefinition("email", "1.3.0")
