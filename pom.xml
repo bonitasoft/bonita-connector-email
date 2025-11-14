@@ -3,7 +3,7 @@
 
     <groupId>org.bonitasoft.connectors</groupId>
     <artifactId>bonita-connector-email</artifactId>
-    <version>1.5.0</versio:n>
+    <version>1.5.0</version>
 
     <name>Bonita Email Connector</name>
     <description>Email Connector for Bonita</description>
