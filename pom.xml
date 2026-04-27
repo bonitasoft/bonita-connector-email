@@ -53,7 +53,7 @@
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>5.0.0.4389</sonar-maven-plugin.version>
         <mockito-core.version>5.8.0</mockito-core.version>
-        <assertj-core.version>3.24.2</assertj-core.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
         <logback-classic.version>1.2.13</logback-classic.version>
         <testcontainers.version>1.19.3</testcontainers.version>
         <bonita-java-client.version>1.0.1</bonita-java-client.version>
