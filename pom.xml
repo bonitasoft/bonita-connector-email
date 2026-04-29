@@ -42,7 +42,7 @@
         <email.main-class>org.bonitasoft.connectors.email.EmailConnector</email.main-class>
 
         <!-- Connector dependencies -->
-        <jakarta.mail.version>1.6.7</jakarta.mail.version>
+        <jakarta.mail.version>1.6.8</jakarta.mail.version>
 
         <!-- Bonita -->
         <bonita-runtime.version>8.0.0</bonita-runtime.version>
