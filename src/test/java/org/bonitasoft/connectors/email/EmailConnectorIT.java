@@ -377,7 +377,7 @@ class EmailConnectorIT {
         document.setHasContent(false);
         document.setId(1);
         document.setProcessInstanceId(1);
-        document.setUrl("http://www.bonitasoft.com");
+        document.setUrl("http://www.ofelia.com");
         document.setName("Document1");
         when(engineExecutionContext.getProcessInstanceId()).thenReturn(1L);
         when(processAPI.getLastDocument(1L, "Document1")).thenReturn(document);
@@ -394,7 +394,7 @@ class EmailConnectorIT {
 
         final Multipart part = (Multipart) messages[0].getContent();
         assertThat((String) part.getBodyPart(0).getContent())
-                .contains("http://www.bonitasoft.com");
+                .contains("http://www.ofelia.com");
     }
 
     @Test

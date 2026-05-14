@@ -238,4 +238,4 @@ curl -X POST https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token \
 - [Microsoft OAuth2 SMTP Documentation](https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth)
 - [Google OAuth2 SMTP Documentation](https://developers.google.com/gmail/imap/xoauth2-protocol)
 - [JavaMail OAuth2 Support](https://javaee.github.io/javamail/OAuth2)
-- [Bonita Connector Development](https://documentation.bonitasoft.com/bonita/latest/software-extensibility/connectors)
+- [Bonita Connector Development](https://documentation.ofelia.com/bonita/latest/software-extensibility/connectors)
