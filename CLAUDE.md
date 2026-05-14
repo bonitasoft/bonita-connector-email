@@ -162,8 +162,8 @@ Key dependencies (managed in `pom.xml`):
 
 ## Additional Resources
 
-- [Bonita Documentation](https://documentation.bonitasoft.com)
-- [Bonita Connector Development Guide](https://documentation.bonitasoft.com/bonita/latest/software-extensibility/connectors)
+- [Bonita Documentation](https://documentation.ofelia.com)
+- [Bonita Connector Development Guide](https://documentation.ofelia.com/bonita/latest/software-extensibility/connectors)
 - [Jakarta Mail API Documentation](https://eclipse-ee4j.github.io/mail/)
 - [Project README](README.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
