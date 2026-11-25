@@ -58,7 +58,7 @@
         <sonar-maven-plugin.version>5.0.0.4389</sonar-maven-plugin.version>
         <mockito-core.version>5.23.0</mockito-core.version>
         <assertj-core.version>3.27.7</assertj-core.version>
-        <logback-classic.version>1.2.13</logback-classic.version>
+        <logback-classic.version>1.6.2</logback-classic.version>
         <testcontainers.version>1.21.4</testcontainers.version>
         <bonita-java-client.version>1.0.1</bonita-java-client.version>
         <awaitility.version>4.2.0</awaitility.version>
@@ -122,8 +122,9 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Jakarta Mail. Bundled with the connector, Jakarta Activation included (transitive):
-             the runtime makes no promise about providing either of them. -->
+        <!-- Jakarta Mail, bundled with the connector together with Jakarta Activation (transitive).
+             The runtime also ships a jakarta.activation, but the connector must not depend on the
+             version it happens to provide: 1.x broke on Bonita 12 for relying on the runtime's activation. -->
         <dependency>
             <groupId>jakarta.mail</groupId>
             <artifactId>jakarta.mail-api</artifactId>
@@ -451,6 +452,9 @@
                             <systemPropertyVariables>
                                 <bonita.image>${bonita.image}</bonita.image>
                             </systemPropertyVariables>
+                            <!-- One JVM per IT class: EmailConnectorWithSSLIT swaps the JVM default SSL socket factory,
+                                 which only works before anything else (e.g. the Maven resolver of the runtime ITs) initializes it -->
+                            <reuseForks>false</reuseForks>
                         </configuration>
                     </execution>
                 </executions>

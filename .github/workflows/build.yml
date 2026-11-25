@@ -29,19 +29,21 @@ jobs:
           distribution: temurin
           cache: maven
 
+      # Only the secrets this job needs: the build runs code from the pull request
+      # TODO Bonita 12.0 GA: drop the two JFROG_* secrets (only needed for the runtime snapshots and the snapshot image)
       - name: Extract secrets from Keeper
-        uses: Keeper-Security/ksm-action@54024615476123015b628a22341850b2087ab297 # v1.3.1
+        uses: Keeper-Security/ksm-action@3a1d7a4b72f910a8ed46377b3b015fbabe60689b # v1.3.3
         with:
           keeper-secret-config: ${{ secrets.KSM_CONFIG }}
           secrets: |
             ${{ vars.KEEPER_SONARCLOUD_RECORD_ID }}/field/password > env:SONAR_TOKEN
+            ${{ vars.KEEPER_JFROG_RECORD_ID }}/field/login > env:JFROG_USER
+            ${{ vars.KEEPER_JFROG_RECORD_ID }}/field/password > env:JFROG_TOKEN
 
       # TODO Bonita 12.0 GA: remove the two steps below once Bonita 12.0 is released on Maven Central and Docker Hub
       # (only needed to resolve the runtime snapshots and pull the snapshot image used by the runtime ITs)
-      - name: Setup Maven settings
-        uses: bonitasoft/maven-settings-action@v2
-        with:
-          keeper-secret-config: ${{ secrets.KSM_CONFIG }}
+      - name: Setup Maven settings (Bonita Artifactory read access)
+        run: mkdir -p ~/.m2 && cp .github/maven-settings.xml ~/.m2/settings.xml
 
       - name: Login to the Bonita Docker registry
         uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
