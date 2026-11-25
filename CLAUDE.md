@@ -8,9 +8,9 @@ The Bonita Email Connector is a Java-based connector for the Bonita BPM platform
 
 ## Key Technologies
 
-- **Java 11+**: Primary programming language
+- **Java 17+**: Primary programming language (Bonita 12+; Bonita 8.0 - 11.x: 1.x versions)
 - **Maven**: Build system and dependency management
-- **Jakarta Mail API**: Email composition and SMTP communication
+- **Jakarta Mail 2.1 (Eclipse Angus Mail)**: Email composition and SMTP communication
 - **Bonita Connector Framework**: Integration with Bonita BPM
 - **JUnit 5**: Testing framework
 - **GreenMail**: Mock SMTP server for testing

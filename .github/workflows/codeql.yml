@@ -53,6 +53,12 @@ jobs:
         # queries: security-extended,security-and-quality
 
 
+    # TODO Bonita 12.0 GA: remove this step once Bonita 12.0 is released on Maven Central (only needed to resolve runtime snapshots)
+    - name: Setup Maven settings
+      uses: bonitasoft/maven-settings-action@v2
+      with:
+        keeper-secret-config: ${{ secrets.KSM_CONFIG }}
+
     # Autobuild attempts to build any compiled languages  (C/C++, C#, Go, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild

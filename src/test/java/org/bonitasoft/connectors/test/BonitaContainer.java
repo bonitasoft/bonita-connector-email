@@ -56,11 +56,11 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
     private User user;
 
     public BonitaContainer() {
-        this(System.getProperty("bonita.version", "10.2"));
+        this(System.getProperty("bonita.image"));
     }
-    
-    public BonitaContainer(String version) {
-        super(String.format("bonita:%s", requireNonNull(version, "Bonita image version not defined !")));
+
+    public BonitaContainer(String image) {
+        super(requireNonNull(image, "Bonita image not defined (bonita.image system property) !"));
         withExposedPorts(8080);
         waitingFor(Wait.forHttp("/bonita"));
         withLogConsumer(new Slf4jLogConsumer(LOGGER));

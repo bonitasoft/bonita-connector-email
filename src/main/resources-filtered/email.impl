@@ -7,7 +7,7 @@
 	<definitionVersion>${email.def.version}</definitionVersion>
 	<implementationClassname>${email.main-class}</implementationClassname>
     <hasSources>false</hasSources>
-	<description>Implementation based on javax.mail 1.4.5</description>
+	<description>Implementation based on Jakarta Mail 2.1 (Eclipse Angus Mail)</description>
 
 	<!-- retrieved from the pom.xml at build time -->
 	${connector-dependencies}
