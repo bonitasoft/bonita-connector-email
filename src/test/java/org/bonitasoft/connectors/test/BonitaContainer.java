@@ -53,10 +53,12 @@ public class BonitaContainer extends GenericContainer<BonitaContainer> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BonitaContainer.class);
     private static final String DEFAULT_USER = "test.user";
     private static final String DEFAULT_PASSWORD = "bpm";
+    // ponytail: duplicated from the pom's bonita.image property so the IT runs from the IDE; keep both in sync
+    private static final String DEFAULT_IMAGE = "bonitasoft.jfrog.io/docker-snapshots/bonita-community:12.0-SNAPSHOT";
     private User user;
 
     public BonitaContainer() {
-        this(System.getProperty("bonita.image"));
+        this(System.getProperty("bonita.image", DEFAULT_IMAGE));
     }
 
     public BonitaContainer(String image) {
