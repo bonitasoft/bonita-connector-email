@@ -21,13 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
 import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
+import javax.net.ssl.SSLHandshakeException;
+
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage.RecipientType;
 
 import org.bonitasoft.engine.api.APIAccessor;
 import org.bonitasoft.engine.api.ProcessAPI;
@@ -66,8 +67,10 @@ class EmailConnectorWithSSLIT {
     @Test
     void should_fails_when_checking_server_identity() throws Exception {
         ConnectorException excpetion = assertThrows(ConnectorException.class, () ->  executeConnector(getBasicSSLSettings()));
-        assertThat(excpetion.getCause().getCause()).isInstanceOf(IOException.class);
-        assertThat(excpetion.getCause().getCause().getMessage()).isEqualTo("Can't verify identity of server: 127.0.0.1");
+        // Angus Mail 2 delegates the identity check to JSSE endpoint identification
+        assertThat(excpetion.getCause().getCause())
+                .isInstanceOf(SSLHandshakeException.class)
+                .hasMessageContaining("No subject alternative names present");
     }
  
     @Test

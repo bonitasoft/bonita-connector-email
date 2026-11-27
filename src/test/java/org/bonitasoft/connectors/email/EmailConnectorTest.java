@@ -17,6 +17,7 @@
  */
 package org.bonitasoft.connectors.email;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 import org.bonitasoft.engine.api.APIAccessor;
@@ -36,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -85,6 +88,26 @@ class EmailConnectorTest {
     @Test
     void validatesSimpliestEmail() throws ConnectorValidationException {
         validateConnector(getBasicSettings());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            // trustCertificate, mail.smtp.ssl.trust, mail.smtp.ssl.checkserveridentity
+            "true, *, false", // Angus Mail 2 checks the server identity by default, javax.mail 1.6 did not
+            "false, , true" })
+    void configuresServerIdentityCheckFromTrustCertificate(boolean trustCertificate, String expectedTrust,
+            String expectedCheckServerIdentity) throws ConnectorValidationException {
+        final Map<String, Object> parameters = getBasicSettings();
+        parameters.put(EmailConnector.SSL_SUPPORT, true);
+        parameters.put(EmailConnector.TRUST_CERTIFICATE, trustCertificate);
+        final EmailConnector email = new EmailConnector();
+        email.setInputParameters(parameters);
+        email.validateInputParameters();
+
+        Properties properties = email.getSession().getProperties();
+
+        assertThat(properties.getProperty("mail.smtp.ssl.trust")).isEqualTo(expectedTrust);
+        assertThat(properties.getProperty("mail.smtp.ssl.checkserveridentity")).isEqualTo(expectedCheckServerIdentity);
     }
 
     @ParameterizedTest

@@ -6,6 +6,16 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.bonitasoft.connectors/bonita-connector-email.svg?label=Maven%20Central&color=orange)](https://search.maven.org/search?q=g:%22org.bonitasoft.connectors%22%20AND%20a:%22bonita-connector-email%22)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-yellow.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
+## Compatibility
+
+| Connector              | Bonita         | Java          | Mail API                              |
+|------------------------|----------------|---------------|---------------------------------------|
+| 2.x (`master`)         | 12.0 and later | 17 and later  | Jakarta Mail 2.1 (Eclipse Angus Mail) |
+| 1.x (up to 1.5.0)      | 8.0 to 11.x    | 11 and later  | `javax.mail` 1.6                      |
+
+The connector definition (`email` 1.3.0) is unchanged: on Bonita 12, processes using a 1.x implementation
+must switch to a 2.x implementation (1.x fails with `NoClassDefFoundError: javax/activation/DataSource`).
+
 ## Build
 
 __Clone__ or __fork__ this repository, then at the root of the project run:
